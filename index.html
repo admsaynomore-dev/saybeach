@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>SAYBEACH · Entradas</title>
+<meta name="description" content="Entradas para las fiestas de Say Beach - Costanera Este, Santa Fe.">
+<meta property="og:title" content="SAYBEACH · Entradas">
+<meta property="og:description" content="Comprá tus entradas para las fiestas de Say Beach.">
+<meta property="og:image" content="https://lh3.googleusercontent.com/d/1KKlj3Er8C41muKqPxC-LEqthxZYlRF_e=w1200">
+<meta name="theme-color" content="#0b0b0b">
+<style>
+  html,body{margin:0;padding:0;height:100%;background:#0b0b0b;overflow:hidden}
+  iframe{position:fixed;inset:0;width:100%;height:100%;height:100dvh;border:0;display:block;background:#0b0b0b}
+</style>
+</head>
+<body>
+<!--
+  SAYBEACH — página pública de la ticketera.
+  Muestra la app de Apps Script adentro de esta página, así no aparece el cartel
+  "Un usuario de Google Apps Script creó esta aplicación".
+  Pasa todo lo que viene después del ? (evento, entrada, puerta, etc.) a la app.
+-->
+<iframe id="app" title="SAYBEACH" allow="camera; clipboard-read; clipboard-write; fullscreen; payment"></iframe>
+<script>
+  var EXEC = 'https://script.google.com/macros/s/AKfycbxxxrsGPeeKG4i5aVaDEv48eWVq3VnY0WgTY8EaHL4mkCTi9C5w_msYb0tu0i8s4dY6dA/exec';
+  document.getElementById('app').src = EXEC + (location.search || '');
+</script>
+</body>
+</html>
