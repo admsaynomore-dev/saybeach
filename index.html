@@ -10,21 +10,46 @@
 <meta property="og:image" content="https://lh3.googleusercontent.com/d/1KKlj3Er8C41muKqPxC-LEqthxZYlRF_e=w1200">
 <meta name="theme-color" content="#0b0b0b">
 <style>
-  html,body{margin:0;padding:0;height:100%;background:#0b0b0b;overflow:hidden}
-  iframe{position:fixed;inset:0;width:100%;height:100%;height:100dvh;border:0;display:block;background:#0b0b0b}
+  html,body{margin:0;padding:0;height:100%;background:#0b0b0b;color:#f5c400;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  iframe{position:fixed;inset:0;width:100%;height:100%;height:100dvh;border:0;display:block;background:transparent}
+  #wait{position:fixed;inset:0;z-index:5;background:#0b0b0b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px}
+  #wait b{font-size:26px;letter-spacing:2px}
+  #wait .sp{width:34px;height:34px;border:3px solid rgba(245,196,0,.25);border-top-color:#f5c400;border-radius:50%;animation:g 1s linear infinite}
+  #wait a{color:#f5c400;font-size:14px}
+  @keyframes g{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <!--
   SAYBEACH — página pública de la ticketera.
-  Muestra la app de Apps Script adentro de esta página, así no aparece el cartel
-  "Un usuario de Google Apps Script creó esta aplicación".
-  Pasa todo lo que viene después del ? (evento, entrada, puerta, etc.) a la app.
+  Muestra la app de Apps Script adentro de esta página (así no aparece el cartel de Google).
+  Si el teléfono no deja cargarla adentro (navegador de Instagram/Facebook/TikTok o algunos iPhone),
+  abre la app directo, así nunca queda la pantalla negra.
 -->
-<iframe id="app" title="SAYBEACH" allow="camera; clipboard-read; clipboard-write; fullscreen; payment"></iframe>
+<div id="wait"><b>SAYBEACH</b><div class="sp"></div><div id="msg" style="font-size:14px;color:#bbb">Cargando…</div></div>
 <script>
   var EXEC = 'https://script.google.com/macros/s/AKfycbxxxrsGPeeKG4i5aVaDEv48eWVq3VnY0WgTY8EaHL4mkCTi9C5w_msYb0tu0i8s4dY6dA/exec';
-  document.getElementById('app').src = EXEC + (location.search || '');
+  var DEST = EXEC + (location.search || '');
+  var ua = navigator.userAgent || '';
+  var inApp = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Messenger|Line\/|TikTok|musical_ly|Bytedance|Snapchat|Twitter|WhatsApp/i.test(ua);
+  function directo() { location.replace(DEST); }
+  if (inApp) {
+    directo();
+  } else {
+    var ok = false;
+    window.addEventListener('message', function (e) {
+      if (e.data && e.data.saybeach === 'ok') { ok = true; document.getElementById('wait').style.display = 'none'; }
+    });
+    var f = document.createElement('iframe');
+    f.id = 'app'; f.title = 'SAYBEACH';
+    f.allow = 'camera; clipboard-read; clipboard-write; fullscreen; payment';
+    f.src = DEST;
+    document.body.appendChild(f);
+    setTimeout(function () {
+      if (!ok) document.getElementById('msg').innerHTML = 'Está tardando… <a href="' + DEST + '">tocá acá para abrir</a>';
+    }, 6000);
+    setTimeout(function () { if (!ok) directo(); }, 12000);
+  }
 </script>
 </body>
 </html>
