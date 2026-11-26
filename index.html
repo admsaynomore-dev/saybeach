@@ -855,10 +855,11 @@ function regalos(){
 function pintarRegalos(d,recien){
   S.rg=d;var evs=d.eventos;
   var html='<p><a href="#" onclick="duenos();return false">← Volver al control</a></p><h2>🎁 Regalar invitaciones</h2>'+
-   '<div class="mut sm">Generás invitaciones sin costo. Te quedan los links para mandar por WhatsApp: cada persona completa sus datos con su link (o en la puerta) y le llega el QR. En las estadísticas figuran a tu nombre.</div>';
+   '<div class="mut sm">Cada dueño puede regalar hasta <b>'+((d.eventos[0]||{}).topes||{comunes:{tope:100}}).comunes.tope+' comunes</b> y <b>'+((d.eventos[0]||{}).topes||{vip:{tope:25}}).vip.tope+' VIP</b> por evento. Generás invitaciones sin costo. Te quedan los links para mandar por WhatsApp: cada persona completa sus datos con su link (o en la puerta) y le llega el QR. En las estadísticas figuran a tu nombre.</div>';
   if(!evs.length) html+='<div class="card mut" style="margin-top:12px">No hay eventos a la venta.</div>';
   else html+='<div class="card" style="margin-top:12px"><label>Evento</label><select id="rg_e">'+evs.map(function(e,i){return '<option value="'+i+'">'+h(e.nombre)+' · '+h(e.fecha)+'</option>'}).join('')+'</select>'+
-   '<label>Tipo de entrada</label><select id="rg_t"></select><label>Cantidad (máx. 50)</label><input id="rg_c" inputmode="numeric" value="1">'+
+   '<div id="rg_tope" class="kpis" style="margin:8px 0"></div>'+
+   '<label>Tipo de entrada</label><select id="rg_t"></select><label>Cantidad</label><input id="rg_c" inputmode="numeric" value="1">'+
    '<div id="rgmsg"></div><button class="btn" id="bRg">Generar invitaciones</button></div>';
   var L=d.regalos.filter(function(e){return e.estado!=='ANULADA'}),libres=L.filter(function(e){return e.estado==='SIN DATOS'&&e.link});
   var txt='¡Te regalo una invitación para '+(L[0]?L[0].evento:'')+'! Abrí el link y completá tus datos:\n'+libres.map(function(e,j){return (libres.length>1?(j+1)+') ':'')+e.link}).join('\n');
@@ -872,10 +873,15 @@ function pintarRegalos(d,recien){
   render(html);
   var b=$('bRgCp');if(b)b.onclick=function(){copy(txt,this)};
   if(!evs.length)return;
-  var pinta=function(){var ev=evs[+$('rg_e').value];$('rg_t').innerHTML=ev.tipos.map(function(t){return '<option value="'+h(t.id)+'">'+h(t.tipo)+(t.personas>1?' (x'+t.personas+')':'')+(t.quedan!=null?' · quedan '+t.quedan:'')+'</option>'}).join('')};
+  var pinta=function(){var ev=evs[+$('rg_e').value],tp=ev.topes;
+    $('rg_tope').innerHTML='<div class="kpi"><span class="mut xs">COMUNES · TE QUEDAN</span><b>'+tp.comunes.quedan+'</b><span class="mut xs">regalaste '+tp.comunes.usadas+' de '+tp.comunes.tope+'</span></div>'+
+      '<div class="kpi"><span class="mut xs">VIP · TE QUEDAN</span><b>'+tp.vip.quedan+'</b><span class="mut xs">regalaste '+tp.vip.usadas+' de '+tp.vip.tope+'</span></div>';
+    $('rg_t').innerHTML=ev.tipos.map(function(t){return '<option value="'+h(t.id)+'">'+h(t.tipo)+(t.personas>1?' (x'+t.personas+')':'')+(t.vip?' · VIP':'')+(t.quedan!=null?' · quedan '+t.quedan:'')+'</option>'}).join('')};
   $('rg_e').onchange=pinta;pinta();
   $('bRg').onclick=function(){
-    var c=parseInt($('rg_c').value,10),m=$('rgmsg');if(!(c>=1&&c<=50))return flash(m,'err','La cantidad tiene que ser entre 1 y 50.');
+    var c=parseInt($('rg_c').value,10),m=$('rgmsg'),ev=evs[+$('rg_e').value],t=ev.tipos.filter(function(x){return x.id===$('rg_t').value})[0]||{},tp=t.vip?ev.topes.vip:ev.topes.comunes;
+    if(!(c>=1))return flash(m,'err','Poné una cantidad.');
+    if(c*(t.personas||1)>tp.quedan)return flash(m,'err','Te quedan '+tp.quedan+' invitaciones '+(t.vip?'VIP':'comunes')+' para este evento (tope '+tp.tope+').');
     var t=$('rg_t').options[$('rg_t').selectedIndex].text;if(!confirm('¿Generar '+c+' invitación(es) de '+t+'?'))return;
     var bt=this;bt.disabled=true;bt.innerHTML='<span class="spin"></span>';
     call('apiRegalarDueno',S.a,{tipoId:$('rg_t').value,cantidad:c}).then(function(d){pintarRegalos(d,true)}).catch(function(e){bt.disabled=false;bt.textContent='Generar invitaciones';flash(m,'err',errMsg(e))});
