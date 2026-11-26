@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
+<base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>SAYBEACH · Entradas</title>
@@ -9,76 +10,884 @@
 <meta property="og:description" content="Comprá tus entradas para las fiestas de Say Beach.">
 <meta property="og:image" content="https://lh3.googleusercontent.com/d/1KKlj3Er8C41muKqPxC-LEqthxZYlRF_e=w1200">
 <meta name="theme-color" content="#0b0b0b">
+<!-- SAYBEACH: esta página tiene la app completa y le pide los datos a Google (Apps Script) por atrás. Se genera desde Index.html. -->
+<script>window.SB_API='https://script.google.com/macros/s/AKfycbxxxrsGPeeKG4i5aVaDEv48eWVq3VnY0WgTY8EaHL4mkCTi9C5w_msYb0tu0i8s4dY6dA/exec';</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-  html,body{margin:0;padding:0;height:100%;background:#0b0b0b;color:#f5c400;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-  iframe{position:fixed;inset:0;width:100%;height:100%;height:100dvh;border:0;display:block;background:transparent}
-  #wait{position:fixed;inset:0;z-index:5;background:#0b0b0b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px}
-  #wait b{font-size:26px;letter-spacing:2px}
-  #wait .sp{width:34px;height:34px;border:3px solid rgba(245,196,0,.25);border-top-color:#f5c400;border-radius:50%;animation:g 1s linear infinite}
-  #wait a{color:#f5c400;font-size:14px}
-  @keyframes g{to{transform:rotate(360deg)}}
+:root{--bg:#0b0b0b;--card:#161616;--line:#2a2a2a;--txt:#f1f1f1;--mut:#9a9a9a;--yel:#f5c400;--ok:#1fbf5b;--bad:#e5484d;--warn:#ff9f1a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Arial,sans-serif;font-size:15px}
+a{color:var(--yel)}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px 60px}
+.wide{max-width:980px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.tape{height:8px;background:repeating-linear-gradient(-45deg,var(--yel) 0 14px,#111 14px 28px)}
+.brand{font-family:Anton,Impact,sans-serif;font-size:30px;letter-spacing:1.5px;line-height:1;padding:12px 14px 10px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;max-width:980px;margin:auto}
+.brand small{font-family:Inter;font-size:11px;letter-spacing:2px;color:var(--yel);font-weight:800}
+h2{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:1px;font-size:26px;margin:18px 0 8px;text-transform:uppercase}
+h3{margin:16px 0 8px;font-size:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.ev-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;display:block;margin-bottom:10px;background:#222}
+.ev-ph{width:100%;aspect-ratio:16/9;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-family:Anton;font-size:34px;color:#111;background:repeating-linear-gradient(-45deg,var(--yel) 0 22px,#e0b300 22px 44px);text-align:center;padding:10px}
+.mut{color:var(--mut)}.sm{font-size:13px}.xs{font-size:12px}
+.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.wrapf{flex-wrap:wrap}
+.btn{appearance:none;border:0;border-radius:11px;padding:13px 16px;font-weight:800;font-size:15px;cursor:pointer;background:var(--yel);color:#111;width:100%;font-family:Inter}
+.btn.sec{background:#262626;color:var(--txt);border:1px solid #333}
+.btn.ok{background:var(--ok);color:#fff}.btn.bad{background:var(--bad);color:#fff}
+.btn.sm{padding:8px 11px;font-size:13px;width:auto;border-radius:9px}
+.btn:disabled{opacity:.45;cursor:default}
+input,select,textarea{width:100%;background:#0f0f0f;border:1px solid #333;color:var(--txt);border-radius:10px;padding:12px;font-size:15px;font-family:Inter;margin:4px 0 10px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--yel);border-color:transparent}
+label{font-size:12px;color:var(--mut);font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.tipo{display:flex;justify-content:space-between;align-items:center;border:1px solid #333;border-radius:12px;padding:12px;margin:8px 0;cursor:pointer}
+.tipo.sel{border-color:var(--yel);background:#1d1a0a}
+.tipo.off{opacity:.45;cursor:default}
+.price{font-weight:800;font-size:17px}
+.qty{display:flex;align-items:center;gap:12px}
+.qty button{width:40px;height:40px;border-radius:10px;border:1px solid #444;background:#222;color:#fff;font-size:20px;font-weight:800;cursor:pointer}
+.qty b{font-size:20px;min-width:24px;text-align:center}
+.pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.4px}
+.p-PENDIENTE{background:#3a2d06;color:var(--yel)}.p-APROBADA,.p-VALIDA{background:#0c3a1e;color:#5ee38f}
+.p-RECHAZADA,.p-ANULADA{background:#3d1214;color:#ff8a8d}.p-USADA{background:#262626;color:#bbb}
+.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;padding:10px 0;border-top:1px dashed #333;margin-top:6px}
+.alias{font-family:monospace;font-size:19px;font-weight:800;color:var(--yel);word-break:break-all}
+.msg{padding:11px 13px;border-radius:10px;margin:10px 0;font-size:14px}
+.msg.err{background:#3d1214;color:#ffb3b5}.msg.ok{background:#0c3a1e;color:#9ff0bd}.msg.info{background:#262106;color:#ffe680}
+.center{text-align:center}
+.qrbox{background:#fff;border-radius:16px;padding:16px;display:inline-block}
+.qrbox img{width:250px;height:250px;display:block}
+.code{font-family:monospace;letter-spacing:3px;font-size:18px;font-weight:800}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;max-width:980px;margin:auto}
+.tabs button{flex:0 0 auto;border:1px solid #333;background:#181818;color:#ddd;border-radius:99px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:13px}
+.tabs button.on{background:var(--yel);color:#111;border-color:var(--yel)}
+.badge{background:var(--bad);color:#fff;border-radius:99px;padding:1px 7px;font-size:11px;margin-left:4px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi b{display:block;font-size:24px;font-family:Anton;letter-spacing:1px;font-weight:400}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid #262626;text-align:left}
+th{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+td.n,th.n{text-align:right}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.res{border-radius:18px;padding:22px;text-align:center;margin:12px 0}
+.res.ok{background:#0e4d27;border:2px solid var(--ok)}
+.res.bad{background:#4d1214;border:2px solid var(--bad)}
+.res.warn{background:#4a3205;border:2px solid var(--warn)}
+.res .big{font-family:Anton;font-size:40px;letter-spacing:1px;line-height:1.1}
+.res .who{font-size:22px;font-weight:800;margin-top:8px}
+#reader{width:100%;border-radius:14px;overflow:hidden;background:#000}
+.hide{display:none!important}
+.spin{display:inline-block;width:18px;height:18px;border:3px solid #444;border-top-color:var(--yel);border-radius:50%;animation:s 0.8s linear infinite;vertical-align:middle}
+@keyframes s{to{transform:rotate(360deg)}}
+.loading{padding:50px 0;text-align:center;color:var(--mut)}
+.list-item{border-bottom:1px solid #262626;padding:10px 0}
+.counter{font-family:Anton;font-size:44px;letter-spacing:1px;line-height:1}
+.ev-full{width:100%;height:auto;max-height:78vh;object-fit:contain;border-radius:12px;display:block;margin-bottom:12px;background:#111;cursor:zoom-in}
+.sec-t{font-size:12px;letter-spacing:2.5px;color:var(--mut);font-weight:800;text-transform:uppercase;margin:22px 0 8px}
+.gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+.gal img{flex:0 0 auto;width:46%;max-width:240px;aspect-ratio:4/5;object-fit:cover;border-radius:12px;scroll-snap-align:start;cursor:zoom-in;background:#1a1a1a}
+.lb{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center}
+.lb img{max-width:96vw;max-height:86vh;object-fit:contain;border-radius:8px}
+.lb button{position:absolute;background:rgba(255,255,255,.12);border:0;color:#fff;font-size:26px;width:46px;height:46px;border-radius:50%;cursor:pointer}
+.lb .x{top:14px;right:14px}.lb .pv{left:10px;top:50%}.lb .nx{right:10px;top:50%}
+.lb .cnt{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#bbb;font-size:13px}
+.map{width:100%;height:230px;border:0;border-radius:12px;display:block;background:#1a1a1a}
+.tipo .estado{font-size:11px;font-weight:900;letter-spacing:1px;margin-top:3px}
+.tipo.off .price{text-decoration:line-through;color:var(--mut)}
+.tipo.bloq{opacity:.5;cursor:default;border-style:dashed}
+.p-TRANSFERIDA{background:#1d2440;color:#9db4ff}
+.buybar{position:sticky;bottom:0;margin:16px -14px 0;padding:12px 14px;background:rgba(11,11,11,.96);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:4}
+.buybar b{font-size:20px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<!--
-  SAYBEACH — página pública de la ticketera.
-  Muestra la app de Apps Script adentro de esta página (así no aparece el cartel de Google).
-  Desde Instagram/Facebook/TikTok (que no muestran la app) manda a abrir en Safari o Chrome.
-  Si en el navegador normal no carga en 12 s, abre la app directo.
--->
-<div id="wait"><b>SAYBEACH</b><div class="sp"></div><div id="msg" style="font-size:14px;color:#bbb">Cargando…</div></div>
-<div id="ext" style="display:none;position:fixed;inset:0;z-index:6;background:#0b0b0b;color:#fff;padding:28px 22px;text-align:center;flex-direction:column;align-items:center;justify-content:center;gap:16px">
-  <b style="color:#f5c400;font-size:28px;letter-spacing:2px">SAYBEACH</b>
-  <div style="font-size:19px;font-weight:700">Abrí las entradas en tu navegador</div>
-  <div style="font-size:15px;color:#ccc;max-width:340px;line-height:1.45">Instagram no deja comprar desde adentro de la app. Tocá el botón para abrir la página en <span id="nav">Safari</span>.</div>
-  <a id="bAbrir" href="#" style="display:block;background:#f5c400;color:#111;font-weight:800;font-size:17px;padding:15px 26px;border-radius:12px;text-decoration:none">Abrir en <span id="nav2">Safari</span></a>
-  <div id="pasos" style="font-size:14px;color:#aaa;max-width:340px;line-height:1.5">Si no se abre: tocá <b style="color:#fff">···</b> arriba a la derecha y elegí <b style="color:#fff">“Abrir en el navegador”</b> (o “Abrir en Safari”).</div>
-  <a id="bCopiar" href="#" style="color:#f5c400;font-size:14px">Copiar link</a>
-</div>
+<header>
+  <div class="tape"></div>
+  <div class="brand"><span id="brandName">SAYBEACH</span><small id="brandTag"></small></div>
+</header>
+<div id="tabs" class="tabs hide"></div>
+<main id="app" class="wrap"><div class="loading"><span class="spin"></span></div></main>
+
 <script>
-  var EXEC = 'https://script.google.com/macros/s/AKfycbxxxrsGPeeKG4i5aVaDEv48eWVq3VnY0WgTY8EaHL4mkCTi9C5w_msYb0tu0i8s4dY6dA/exec';
-  var DEST = EXEC + (location.search || '');
-  var ua = navigator.userAgent || '';
-  var inApp = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Messenger|Line\/|TikTok|musical_ly|Bytedance|Snapchat|Twitter/i.test(ua);
-  var ios = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var android = /Android/i.test(ua);
-  function directo() { location.replace(DEST); }
-  if (inApp) {
-    // Los navegadores internos (Instagram, Facebook, TikTok...) no muestran la app: la abrimos en Safari / Chrome
-    document.getElementById('wait').style.display = 'none';
-    var ext = document.getElementById('ext'); ext.style.display = 'flex';
-    var aqui = location.href;
-    var salto;
-    if (android) {
-      document.getElementById('nav').textContent = 'Chrome'; document.getElementById('nav2').textContent = 'Chrome';
-      salto = 'intent://' + aqui.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(DEST) + ';end';
-    } else if (ios) {
-      salto = 'x-safari-' + aqui;
-    } else {
-      salto = DEST;
+var P = (function(){var o={};try{new URLSearchParams(location.search).forEach(function(v,k){o[k]=v})}catch(e){}return o})();
+var BASE = location.origin + location.pathname;
+var S = {};   // estado
+
+/* ---------- utilidades ---------- */
+function $(id){return document.getElementById(id)}
+function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function money(n){return '$'+Math.round(n||0).toLocaleString('es-AR')}
+var API=window.SB_API||'';
+function call(fn){var args=[].slice.call(arguments,1);
+  if(!API&&window.google&&google.script&&google.script.run) return new Promise(function(res,rej){google.script.run.withSuccessHandler(res).withFailureHandler(function(e){rej(e)})[fn].apply(null,args)});
+  return fetch(API,{method:'POST',body:JSON.stringify({fn:fn,args:args}),redirect:'follow'})
+    .then(function(r){return r.json()},function(){throw new Error('Sin conexión. Revisá internet y probá de nuevo.')})
+    .then(function(j){if(!j||!j.ok)throw new Error((j&&j.error)||'Error');return j.data});
+}
+function errMsg(e){var m=(e&&e.message)||String(e);return m.replace(/^Error:\s*/,'').replace(/^Exception:\s*/,'')}
+function render(html){$('app').innerHTML=html;window.scrollTo(0,0)}
+function loading(){render('<div class="loading"><span class="spin"></span></div>')}
+function store(k,v){try{if(v===undefined){return JSON.parse(localStorage.getItem(k)||'null')} if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+function qrSrc(text,size){return 'https://quickchart.io/qr?size='+(size||320)+'&margin=2&text='+encodeURIComponent(text)}
+function ticketUrl(c){return BASE+'?t='+c}
+function copy(t,btn){
+  function done(){if(btn){var o=btn.textContent;btn.textContent='¡Copiado!';setTimeout(function(){btn.textContent=o},1400)}}
+  try{navigator.clipboard.writeText(t).then(done,fb)}catch(e){fb()}
+  function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();done()}
+}
+function flash(el,type,txt){el.innerHTML='<div class="msg '+type+'">'+h(txt)+'</div>'}
+function fileToB64(file){
+  return new Promise(function(res,rej){
+    if(/^image\//.test(file.type)&&file.size>600000){
+      var img=new Image(),url=URL.createObjectURL(file);
+      img.onload=function(){var max=1600,w=img.width,hh=img.height,r=Math.min(1,max/Math.max(w,hh));var c=document.createElement('canvas');c.width=Math.round(w*r);c.height=Math.round(hh*r);c.getContext('2d').drawImage(img,0,0,c.width,c.height);var d=c.toDataURL('image/jpeg',0.82);res({name:file.name.replace(/\.\w+$/,'')+'.jpg',type:'image/jpeg',b64:d.split(',')[1]})};
+      img.onerror=function(){plain()};img.src=url;return;
     }
-    document.getElementById('bAbrir').href = salto;
-    document.getElementById('bCopiar').onclick = function (e) {
-      e.preventDefault();
-      try { navigator.clipboard.writeText(aqui); this.textContent = '¡Link copiado! Pegalo en Safari o Chrome'; }
-      catch (err) { prompt('Copiá este link y abrilo en tu navegador:', aqui); }
-    };
-    setTimeout(function () { location.href = salto; }, 400);
-  } else {
-    var ok = false;
-    window.addEventListener('message', function (e) {
-      if (e.data && e.data.saybeach === 'ok') { ok = true; document.getElementById('wait').style.display = 'none'; }
-    });
-    var f = document.createElement('iframe');
-    f.id = 'app'; f.title = 'SAYBEACH';
-    f.allow = 'camera; clipboard-read; clipboard-write; fullscreen; payment';
-    f.src = DEST;
-    document.body.appendChild(f);
-    setTimeout(function () {
-      if (!ok) document.getElementById('msg').innerHTML = 'Está tardando… <a href="' + DEST + '">tocá acá para abrir</a>';
-    }, 6000);
-    setTimeout(function () { if (!ok) directo(); }, 12000);
+    plain();
+    function plain(){var fr=new FileReader();fr.onload=function(){res({name:file.name,type:file.type,b64:String(fr.result).split(',')[1]})};fr.onerror=rej;fr.readAsDataURL(file)}
+  });
+}
+
+/* ---------- router ---------- */
+(function init(){
+  try{if(window.top!==window.self)window.top.postMessage({saybeach:'ok'},'*')}catch(e){} // avisa a la página pública que la app cargó
+  ['dh_puerta','dh_admin','dh_dueno'].forEach(function(k){var a=store(k);if(a&&!a.tk)store(k,null)}); // sesiones viejas (guardaban el PIN)
+  if(P.t){ if(store('dh_puerta')){ puerta(P.t); } else { verTicket(P.t); } return; }
+  if(P.modo==='puerta') return puerta();
+  if(P.modo==='admin') return admin();
+  if(P.modo==='duenos') return duenos();
+  if(P.modo==='mis') return misEntradas();
+  if(P.modo==='pago') return pagoRetorno(P.orden);
+  venta();
+})();
+
+/* =========================================================
+ * VENTA PÚBLICA
+ * ========================================================= */
+function venta(){
+  loading();
+  call('apiInicio').then(function(d){S.pub=d;$('brandName').textContent=d.app;
+    var slug=String(P.e||P.evento||'').toLowerCase(),ix=-1;
+    if(slug) d.eventos.forEach(function(ev,i){if(ix<0&&(ev.slug===slug||ev.slug.indexOf(slug)===0||ev.id.toLowerCase()===slug))ix=i});
+    if(ix>=0) abrirEvento(ix); else listaEventos()}).catch(function(e){render('<div class="msg err">'+h(errMsg(e))+'</div>')});
+}
+function fechaLarga(ev){return (ev.dia?ev.dia+' ':'')+ev.fecha+(ev.hora?' · '+ev.hora+' hs':'')}
+function eventoHead(ev,full){
+  return (ev.imagen?'<img class="'+(full?'ev-full':'ev-img')+'" src="'+h(ev.imagen)+'" alt=""'+(full?' onclick="verFoto(-1)"':'')+'>':'<div class="ev-ph">'+h(ev.nombre)+'</div>')+
+   '<div style="font-weight:800;font-size:'+(full?'22':'19')+'px">'+h(ev.nombre)+'</div>'+
+   '<div class="mut sm" style="margin-top:3px">📅 '+h(fechaLarga(ev))+(ev.lugar?' · 📍 '+h(ev.lugar):'')+(ev.edadMin?' · +'+h(ev.edadMin):'')+'</div>';
+}
+function tiposVenta(ev){return ev.tipos.filter(function(t){return !t.agotado&&!t.bloqueado&&!t.proxima})}
+function listaEventos(){
+  var d=S.pub,html='<h2>Próximos eventos</h2>';
+  if(!d.eventos.length) html+='<div class="card mut">No hay eventos a la venta por ahora. ¡Atentos!</div>';
+  d.eventos.forEach(function(ev,i){
+    var desde=tiposVenta(ev).map(function(t){return t.precio});
+    html+='<div class="card">'+eventoHead(ev)+
+      '<div class="row between" style="margin-top:12px"><div class="sm">'+(desde.length?'Desde <b>'+money(Math.min.apply(null,desde))+'</b>':'<b style="color:var(--bad)">AGOTADA</b>')+'</div>'+
+      '<button class="btn sm" onclick="abrirEvento('+i+')">'+(desde.length?'Comprar entradas':'Ver evento')+'</button></div></div>';
+  });
+  html+='<p class="center sm"><a href="'+BASE+'?modo=mis" target="_top">🎟️ Ver mis entradas</a>'+(d.instagram?' · <a target="_blank" href="https://instagram.com/'+h(d.instagram)+'">Instagram</a>':'')+'</p>';
+  render(html);
+}
+function mapsQ(ev){var m=ev.maps||'';if(/^https?:/i.test(m)){var c=m.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)||m.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);return c?c[1]+','+c[2]:(ev.lugar||'')}return m||ev.lugar||''}
+function mapsLink(ev){return /^https:\/\//i.test(ev.maps||'')?ev.maps:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(mapsQ(ev))}
+function tipoHtml(t,j){
+  var est='',cls='tipo',click='elegirTipo('+j+')';
+  if(t.bloqueado){cls+=' bloq';click='';est='<div class="estado mut">NO DISPONIBLE POR AHORA</div>'}
+  else if(t.agotado){cls+=' off';click='';est='<div class="estado" style="color:var(--bad)">AGOTADA</div>'}
+  else if(t.proxima){cls+=' bloq';click='';est='<div class="estado" style="color:var(--yel)">PRÓXIMAMENTE · cuando se agote la tanda anterior</div>'}
+  else if(t.quedan!=null) est='<div class="estado" style="color:var(--warn)">¡QUEDAN '+t.quedan+'!</div>';
+  return '<div class="'+cls+'" id="tp'+j+'"'+(click?' onclick="'+click+'"':'')+'><div><div style="font-weight:800">'+h(t.tipo)+'</div>'+
+    (t.descripcion?'<div class="mut xs">'+h(t.descripcion)+'</div>':'')+
+    (t.personas>1?'<div class="mut xs">Incluye '+t.personas+' entradas</div>':'')+est+
+    '</div><div class="price">'+(t.bloqueado&&!t.precio?'—':money(t.precio))+'</div></div>';
+}
+function abrirEvento(i){
+  var ev=S.pub.eventos[i];S.ev=ev;S.sel=null;S.cant=1;
+  var venta=tiposVenta(ev),desde=venta.map(function(t){return t.precio});
+  var html='<p><a href="#" onclick="listaEventos();return false">← Volver</a></p>'+eventoHead(ev,true);
+  if(ev.descripcion) html+='<div class="sec-t">Sobre el evento</div><div class="card" style="white-space:pre-line;line-height:1.55">'+h(ev.descripcion)+'</div>';
+  html+='<div class="sec-t" id="secEntradas">Entradas</div>'+ev.tipos.map(tipoHtml).join('');
+  html+='<div id="cantBox" class="card hide"><div class="row between"><b>Cantidad</b><div class="qty"><button onclick="cambiarCant(-1)">−</button><b id="cant">1</b><button onclick="cambiarCant(1)">+</button></div></div>'+
+    '<div id="subtot"></div><button class="btn" style="margin-top:10px" onclick="formCompra()">Continuar</button></div>';
+  if(ev.galeria&&ev.galeria.length) html+='<div class="sec-t">Galería</div><div class="gal">'+ev.galeria.map(function(u,k){return '<img src="'+h(u)+'" loading="lazy" alt="" onclick="verFoto('+k+')">'}).join('')+'</div>';
+  if(mapsQ(ev)) html+='<div class="sec-t">Ubicación</div><div class="card" style="padding:10px">'+
+    '<iframe class="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q='+encodeURIComponent(mapsQ(ev))+'&z=15&output=embed"></iframe>'+
+    '<div class="row between" style="margin-top:10px"><div class="sm">📍 '+h(ev.lugar||mapsQ(ev))+'</div><a class="btn sm sec" style="text-decoration:none;white-space:nowrap" target="_blank" href="'+h(mapsLink(ev))+'">Cómo llegar</a></div></div>';
+  if(desde.length) html+='<div class="buybar" id="buybar"><div><div class="mut xs">DESDE</div><b>'+money(Math.min.apply(null,desde))+'</b></div><button class="btn" style="width:auto" onclick="irEntradas()">Comprar entradas</button></div>';
+  render(html);
+}
+function irEntradas(){var v=tiposVenta(S.ev);if(v.length===1&&!S.sel){elegirTipo(S.ev.tipos.indexOf(v[0]));return}$('secEntradas').scrollIntoView({behavior:'smooth',block:'start'})}
+function verFoto(k){
+  var fotos=(S.ev.imagen?[S.ev.imagen]:[]).concat(S.ev.galeria||[]),i=k<0?0:k+(S.ev.imagen?1:0);
+  if(!fotos.length)return;
+  var lb=document.createElement('div');lb.className='lb';document.body.appendChild(lb);
+  function pinta(){lb.innerHTML='<img src="'+h(fotos[i])+'" alt=""><button class="x" aria-label="Cerrar">✕</button>'+(fotos.length>1?'<button class="pv">‹</button><button class="nx">›</button><div class="cnt">'+(i+1)+' / '+fotos.length+'</div>':'');
+    lb.querySelector('.x').onclick=cerrar;var p=lb.querySelector('.pv'),n=lb.querySelector('.nx');
+    if(p)p.onclick=function(e){e.stopPropagation();i=(i-1+fotos.length)%fotos.length;pinta()};if(n)n.onclick=function(e){e.stopPropagation();i=(i+1)%fotos.length;pinta()}}
+  function cerrar(){lb.remove();document.removeEventListener('keydown',key)}
+  function key(e){if(e.key==='Escape')cerrar();if(e.key==='ArrowRight'&&fotos.length>1){i=(i+1)%fotos.length;pinta()}if(e.key==='ArrowLeft'&&fotos.length>1){i=(i-1+fotos.length)%fotos.length;pinta()}}
+  var x0=null;lb.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+  lb.addEventListener('touchend',function(e){if(x0==null||fotos.length<2)return;var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){i=(i+(dx<0?1:-1)+fotos.length)%fotos.length;pinta()}x0=null});
+  lb.addEventListener('click',function(e){if(e.target===lb)cerrar()});document.addEventListener('keydown',key);pinta();
+}
+function elegirTipo(j){
+  S.sel=S.ev.tipos[j];S.cant=1;
+  document.querySelectorAll('.tipo').forEach(function(x){x.classList.remove('sel')});$('tp'+j).classList.add('sel');
+  $('cantBox').classList.remove('hide');pintarCant();$('cantBox').scrollIntoView({behavior:'smooth',block:'center'});
+  var bb=$('buybar');if(bb)bb.classList.add('hide');
+}
+function cambiarCant(d){
+  var max=Math.min(S.pub.max,S.sel.quedan!=null?S.sel.quedan:999);
+  S.cant=Math.max(1,Math.min(max,S.cant+d));pintarCant();
+}
+function calc(){var sub=S.sel.precio*S.cant,cargo=Math.round(sub*(S.pub.cargoPct||0)/100);return{sub:sub,cargo:cargo,total:sub+cargo}}
+function pintarCant(){
+  $('cant').textContent=S.cant;var c=calc();
+  $('subtot').innerHTML=(c.cargo?'<div class="row between sm mut" style="margin-top:8px"><span>Cargo por servicio</span><span>'+money(c.cargo)+'</span></div>':'')+
+    '<div class="total"><span>Total</span><span>'+money(c.total)+'</span></div>';
+}
+function formCompra(){
+  var t=S.sel,n=S.cant*t.personas,c=calc(),d=S.pub;
+  var html='<p><a href="#" onclick="abrirEvento(S.pub.eventos.indexOf(S.ev));return false">← Volver</a></p>'+
+   '<div class="card"><div class="mut xs">'+h(S.ev.nombre)+'</div><div style="font-weight:800">'+S.cant+' × '+h(t.tipo)+'</div><div class="total" style="border:0;padding:4px 0 0"><span>Total</span><span>'+money(c.total)+'</span></div></div>'+
+   '<h3>1 · Tus datos (titular)</h3><div class="card">'+
+   '<div class="mut xs" style="margin-bottom:4px">Todos los datos son obligatorios, salvo la fecha de nacimiento.</div>'+
+   '<label>Nombre y apellido *</label><input id="f_nombre" autocomplete="name">'+
+   '<label>DNI *</label><input id="f_dni" inputmode="numeric" maxlength="9">'+
+   '<label>Mail * (ahí te llegan las entradas)</label><input id="f_mail" type="email" autocomplete="email">'+
+   '<label>Celular * (con característica, ej: 342 5123456)</label><input id="f_tel" inputmode="tel" autocomplete="tel">'+
+   '<label>Fecha de nacimiento (opcional)</label><input id="f_nac" type="date" max="'+new Date().toISOString().slice(0,10)+'">'+
+   '</div>';
+  if(n>1){
+    html+='<h3>2 · Datos de cada asistente</h3><div class="card"><div class="mut sm" style="margin-bottom:8px">La entrada 1 es la tuya. Cada entrada es nominal: completá nombre y DNI de cada persona.</div>';
+    for(var i=1;i<n;i++) html+='<div class="mut xs" style="font-weight:800;margin-top:6px">ENTRADA '+(i+1)+'</div><div class="grid2"><input id="a_n'+i+'" placeholder="Nombre y apellido"><input id="a_d'+i+'" placeholder="DNI" inputmode="numeric" maxlength="9"></div><label class="xs" style="margin-top:4px">Nacimiento (opcional)</label><input id="a_b'+i+'" type="date">';
+    html+='</div>';
   }
+  var paso=n>1?3:2;
+  S.metodo=(d.pagoMP&&c.total>0)?'MP':'TRANSF';
+  if(c.total===0) html+='<div class="msg info">Esta entrada es sin cargo: no hace falta pagar. Tu pedido queda pendiente de aprobación.</div><div class="hide">';
+  if(c.total>0&&d.pagoMP){
+    html+='<h3>'+paso+' · ¿Cómo querés pagar?</h3><div class="card">'+
+     '<div class="tipo sel" id="m_MP" onclick="elegirMetodo(\'MP\')"><div><div style="font-weight:800">💳 Mercado Pago</div><div class="mut xs">Tarjeta de crédito, débito o dinero en cuenta. Las entradas te llegan al toque.</div></div><div class="price">'+money(c.total)+'</div></div>'+
+     (d.pagoTransf?'<div class="tipo" id="m_TRANSF" onclick="elegirMetodo(\'TRANSF\')"><div><div style="font-weight:800">🏦 Transferencia</div><div class="mut xs">Transferís al alias y subís el comprobante. Te llegan cuando lo aprobamos.</div></div><div class="price">'+money(c.total)+'</div></div>':'')+
+     '</div>';
+  }
+  html+='<div id="transfBox"'+(S.metodo==='MP'?' class="hide"':'')+'>';
+  html+='<h3>'+(d.pagoMP&&c.total>0?'':paso+' · ')+'Transferí y subí el comprobante</h3><div class="card">'+
+   '<div class="mut sm">Transferí exactamente</div><div style="font-size:26px;font-weight:800;margin:2px 0 10px">'+money(c.total)+'</div>'+
+   '<div class="mut sm">Alias</div><div class="row between"><div class="alias">'+h(d.alias)+'</div><button class="btn sm sec" onclick="copy(\''+h(d.alias).replace(/'/g,"\\'")+'\',this)">Copiar</button></div>'+
+   (d.cbu?'<div class="mut sm" style="margin-top:8px">CBU/CVU</div><div class="row between"><div class="alias" style="font-size:15px">'+h(d.cbu)+'</div><button class="btn sm sec" onclick="copy(\''+h(d.cbu)+'\',this)">Copiar</button></div>':'')+
+   '<div class="sm" style="margin-top:8px">Titular: <b>'+h(d.titular)+'</b>'+(d.banco?' · '+h(d.banco):'')+'</div>'+
+   '<label style="display:block;margin-top:14px">Comprobante (foto o PDF)</label><input id="f_comp" type="file" accept="image/*,application/pdf">'+
+   '</div></div>'+(c.total===0?'</div>':'')+
+   '<div class="card sm"><label style="text-transform:none;font-size:14px;color:var(--txt);display:flex;gap:10px;align-items:flex-start"><input id="f_ok" type="checkbox" style="width:auto;margin:3px 0 0"> <span>Acepto las condiciones: '+h(d.condiciones)+(S.ev.edadMin?' Evento para mayores de '+h(S.ev.edadMin)+'.':'')+'</span></label></div>'+
+   '<div id="fmsg"></div><button class="btn" id="bComprar" onclick="enviarCompra()">'+(S.metodo==='MP'?'Pagar con Mercado Pago':'Enviar compra')+'</button>'+
+   '<p class="mut xs center" id="pieCompra">'+(S.metodo==='MP'?'Te llevamos a Mercado Pago para pagar. Cuando se apruebe, te llegan las entradas con QR por mail.':'Cuando verifiquemos la transferencia te llegan las entradas con QR por mail.')+'</p>';
+  render(html);
+}
+function elegirMetodo(m){
+  S.metodo=m;['MP','TRANSF'].forEach(function(x){var el=$('m_'+x);if(el)el.classList.toggle('sel',x===m)});
+  $('transfBox').classList.toggle('hide',m==='MP');
+  $('bComprar').textContent=m==='MP'?'Pagar con Mercado Pago':'Enviar compra';
+  $('pieCompra').textContent=m==='MP'?'Te llevamos a Mercado Pago para pagar. Cuando se apruebe, te llegan las entradas con QR por mail.':'Cuando verifiquemos la transferencia te llegan las entradas con QR por mail.';
+}
+function enviarCompra(){
+  var t=S.sel,n=S.cant*t.personas,m=$('fmsg');
+  var d={tipoId:t.id,cantidad:S.cant,nombre:$('f_nombre').value.trim(),dni:$('f_dni').value.replace(/\D/g,''),mail:$('f_mail').value.trim(),telefono:$('f_tel').value.trim(),rrpp:'',nacimiento:$('f_nac').value,asistentes:[{}]};
+  if(d.nombre.length<3||d.nombre.split(/\s+/).length<2) return flash(m,'err','Completá tu nombre y apellido.');
+  if(d.dni.length<7) return flash(m,'err','Revisá el DNI.');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.mail)) return flash(m,'err','Revisá el mail.');
+  if(d.telefono.replace(/\D/g,'').length<8) return flash(m,'err','Completá tu celular con característica.');
+  for(var i=1;i<n;i++){
+    var an=$('a_n'+i).value.trim(),ad=$('a_d'+i).value.replace(/\D/g,'');
+    if(an.length<3||ad.length<7) return flash(m,'err','Completá nombre y DNI de la entrada '+(i+1)+'.');
+    d.asistentes.push({nombre:an,dni:ad,nac:($('a_b'+i)||{}).value||''});
+  }
+  var f=$('f_comp').files[0],gratis=calc().total===0,porMP=!gratis&&S.metodo==='MP';
+  if(porMP){f=null;d.metodo='MP';}
+  if(!f&&!gratis&&!porMP) return flash(m,'err','Subí el comprobante de la transferencia.');
+  if(!$('f_ok').checked) return flash(m,'err','Tenés que aceptar las condiciones.');
+  var b=$('bComprar');b.disabled=true;b.innerHTML='<span class="spin"></span> Enviando…';m.innerHTML='';
+  (f?fileToB64(f):Promise.resolve(null)).then(function(c){d.comprobante=c;return call('apiComprar',d)}).then(function(r){
+    if(r.checkoutUrl){
+      render('<div class="card center" style="margin-top:20px"><div style="font-size:46px">💳</div><h2>Último paso: pagá</h2>'+
+        '<p>Orden <b class="code" style="font-size:16px;color:var(--yel)">'+h(r.orden)+'</b> · '+money(r.total)+'</p>'+
+        '<a class="btn" style="display:block;text-decoration:none;margin-top:10px" href="'+h(r.checkoutUrl)+'" target="_top">Ir a pagar con Mercado Pago</a>'+
+        '<p class="mut xs" style="margin-top:12px">Tenés '+30+' minutos para pagar; después la reserva se libera.</p></div>');
+      try{window.open(r.checkoutUrl,'_top')}catch(e){}
+      return;
+    }
+    render('<div class="card center" style="margin-top:20px"><div style="font-size:46px">⏳</div><h2>¡Compra recibida!</h2>'+
+      '<p>Tu número de orden es</p><div class="code" style="font-size:24px;color:var(--yel)">'+h(r.orden)+'</div>'+
+      '<p class="sm">'+(r.total?'Estamos verificando la transferencia de <b>'+money(r.total)+'</b>.':'Tu pedido quedó pendiente de aprobación.')+' Cuando la aprobemos te llegan las entradas con QR a <b>'+h(d.mail)+'</b>.</p>'+
+      '<p class="sm mut">Revisá también la carpeta de spam / promociones.</p>'+
+      '<a class="btn" style="display:block;text-decoration:none;margin-top:14px" href="'+BASE+'?modo=mis" target="_top">Ver mis entradas</a></div>');
+  }).catch(function(e){b.disabled=false;b.textContent='Enviar compra';flash(m,'err',errMsg(e))});
+}
+
+/* =========================================================
+ * MIS ENTRADAS + VISTA DE ENTRADA
+ * ========================================================= */
+function misEntradas(){
+  var g=store('dh_mis')||{};
+  render('<h2>Mis entradas</h2><div class="card"><label>DNI del titular</label><input id="m_dni" inputmode="numeric" value="'+h(g.dni||'')+'">'+
+   '<label>Mail con el que compraste</label><input id="m_mail" type="email" value="'+h(g.mail||'')+'"><div id="mmsg"></div><button class="btn" id="bMis" onclick="buscarMis()">Buscar</button></div><div id="misRes"></div>'+
+   '<p class="center sm"><a href="'+BASE+'" target="_top">← Ir a eventos</a></p>');
+  if(g.dni&&g.mail) buscarMis();
+}
+function buscarMis(){
+  var dni=$('m_dni').value,mail=$('m_mail').value,b=$('bMis');
+  b.disabled=true;b.innerHTML='<span class="spin"></span>';
+  call('apiMisEntradas',dni,mail).then(function(list){
+    b.disabled=false;b.textContent='Buscar';store('dh_mis',{dni:dni,mail:mail});
+    if(!list.length){$('misRes').innerHTML='<div class="msg info">No encontramos compras con esos datos.</div>';return}
+    $('misRes').innerHTML=list.map(function(o){
+      return '<div class="card"><div class="row between"><b>'+h(o.evento)+'</b><span class="pill p-'+h(o.estado)+'">'+h(o.estado)+'</span></div>'+
+       '<div class="mut sm">'+h(o.orden)+' · '+o.cantidad+' × '+h(o.tipo)+' · '+money(o.total)+' · '+h(o.fecha)+'</div>'+
+       (o.estado==='RECHAZADA'&&o.motivo?'<div class="msg err">'+h(o.motivo)+'</div>':'')+
+       (o.estado==='PENDIENTE'?'<div class="msg info">Estamos verificando la transferencia.</div>':'')+
+       o.entradas.map(function(e){return '<div class="list-item row between"><div><div>'+h(e.nombre)+'</div><span class="pill p-'+h(e.estado)+'">'+h(e.estado)+'</span>'+(o.gratis?' <span class="pill p-PENDIENTE">INVITACIÓN</span>':'')+'</div>'+(e.codigo?'<a class="btn sm" style="text-decoration:none" href="'+ticketUrl(e.codigo)+'" target="_top">Ver QR</a>':'')+'</div>'}).join('')+'</div>';
+    }).join('');
+  }).catch(function(e){b.disabled=false;b.textContent='Buscar';flash($('mmsg'),'err',errMsg(e))});
+}
+function pagoRetorno(orden,intento){
+  intento=intento||0;
+  if(!intento) loading();
+  call('apiEstadoPago',orden).then(function(r){
+    if(!r||!r.encontrada){render('<div class="msg err" style="margin-top:20px">No encontramos esa orden.</div>');return}
+    var html='<div class="card center" style="margin-top:16px">';
+    if(r.estado==='APROBADA'){
+      html+='<div style="font-size:46px">🎉</div><h2>¡Pago aprobado!</h2><p>Orden <b>'+h(r.orden)+'</b> · '+r.cantidad+' × '+h(r.tipo)+'</p>'+
+        '<p class="sm">Te mandamos las entradas a <b>'+h(r.mail)+'</b>.'+(r.entradas.length?' También las tenés acá:':' También las ves en Mis entradas.')+'</p></div><div class="card">'+
+        r.entradas.map(function(e){return '<div class="list-item row between"><div>'+h(e.nombre)+'</div><a class="btn sm" style="text-decoration:none" href="'+ticketUrl(e.codigo)+'" target="_top">Ver QR</a></div>'}).join('')+'</div>';
+    } else if(r.estado==='PENDIENTE'){
+      html+='<div style="font-size:46px">⏳</div><h2>Confirmando el pago…</h2><p class="sm">Orden <b>'+h(r.orden)+'</b>. Apenas Mercado Pago lo confirme te llegan las entradas por mail.</p>'+
+        '<button class="btn sec" onclick="pagoRetorno(\''+h(r.orden)+'\')">Actualizar</button></div>';
+      if(intento<8) setTimeout(function(){pagoRetorno(orden,intento+1)},5000);
+    } else {
+      html+='<div style="font-size:46px">❌</div><h2>El pago no se completó</h2><p class="sm">'+h(r.motivo||'')+'</p>'+
+        '<a class="btn" style="display:block;text-decoration:none" href="'+BASE+'" target="_top">Volver a intentar</a></div>';
+    }
+    html+='<p class="center sm"><a href="'+BASE+'?modo=mis" target="_top">Mis entradas</a></p>';
+    render(html);
+  }).catch(function(e){render('<div class="msg err">'+h(errMsg(e))+'</div>')});
+}
+function formActivar(t){
+  render('<div class="card center" style="margin-top:16px"><div class="mut xs">'+(t.gratis?'INVITACIÓN':'ENTRADA')+'</div><div style="font-weight:800;font-size:19px">'+h(t.evento)+'</div>'+
+   '<div class="mut sm">'+h(t.fecha)+(t.hora?' · '+h(t.hora)+' hs':'')+(t.lugar?' · '+h(t.lugar):'')+' · '+h(t.tipo)+'</div></div>'+
+   '<h3>Completá tus datos para activar tu '+(t.gratis?'invitación':'entrada')+'</h3><div class="card"><div class="mut xs" style="margin-bottom:4px">Todos los datos son obligatorios, salvo la fecha de nacimiento. La entrada queda a tu nombre y te llega el QR al mail.</div>'+
+   '<label>Nombre y apellido *</label><input id="v_n" autocomplete="name"><label>DNI *</label><input id="v_d" inputmode="numeric" maxlength="9">'+
+   '<label>Mail *</label><input id="v_m" type="email" autocomplete="email"><label>Celular * (con característica)</label><input id="v_t" inputmode="tel" autocomplete="tel">'+
+   '<label>Fecha de nacimiento (opcional)</label><input id="v_b" type="date" max="'+new Date().toISOString().slice(0,10)+'">'+
+   '<div id="vmsg"></div><button class="btn" id="bAct">Activar mi entrada</button></div>');
+  $('bAct').onclick=function(){
+    var d={nombre:$('v_n').value.trim(),dni:$('v_d').value.replace(/\D/g,''),mail:$('v_m').value.trim(),telefono:$('v_t').value.trim(),nacimiento:$('v_b').value},m=$('vmsg');
+    if(d.nombre.split(/\s+/).length<2) return flash(m,'err','Completá nombre y apellido.');
+    if(d.dni.length<7) return flash(m,'err','Revisá el DNI.');
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.mail)) return flash(m,'err','Revisá el mail.');
+    if(d.telefono.replace(/\D/g,'').length<8) return flash(m,'err','Completá el celular con característica.');
+    var b=this;b.disabled=true;b.innerHTML='<span class="spin"></span>';
+    call('apiActivar',t.codigo,d).then(function(){verTicket(t.codigo)}).catch(function(e){b.disabled=false;b.textContent='Activar mi entrada';flash(m,'err',errMsg(e))});
+  };
+}
+
+function formTransferir(){
+  var t=S.tk;
+  render('<p><a href="#" onclick="verTicket(\''+h(t.codigo)+'\');return false">← Volver a la entrada</a></p>'+
+   '<h2>Transferir '+(t.gratis?'invitación':'entrada')+'</h2><div class="card sm"><b>'+h(t.evento)+'</b> · '+h(t.tipo)+'<div class="mut">Hoy está a nombre de '+h(t.nombre)+' (DNI '+h(t.dni)+')</div></div>'+
+   '<div class="msg info">Al transferirla, <b>tu QR deja de servir</b> y a la otra persona le llega uno nuevo a su mail. No se puede deshacer.</div>'+
+   '<div class="card"><label>Tu DNI (para confirmar que sos vos) *</label><input id="tr_a" inputmode="numeric" maxlength="9">'+
+   '<div class="mut xs" style="margin-bottom:6px">El DNI de la entrada o el del titular de la compra.</div></div>'+
+   '<h3>Datos de quien la recibe</h3><div class="card">'+
+   '<label>Nombre y apellido *</label><input id="tr_n" autocomplete="off"><label>DNI *</label><input id="tr_d" inputmode="numeric" maxlength="9">'+
+   '<label>Mail * (ahí le llega el QR)</label><input id="tr_m" type="email" autocomplete="off"><label>Celular * (con característica)</label><input id="tr_t" inputmode="tel" autocomplete="off">'+
+   '<label>Fecha de nacimiento (opcional)</label><input id="tr_b" type="date" max="'+new Date().toISOString().slice(0,10)+'">'+
+   '<div id="trmsg"></div><button class="btn" id="bTr">Transferir</button></div>');
+  $('bTr').onclick=function(){
+    var d={dniActual:$('tr_a').value.replace(/\D/g,''),nombre:$('tr_n').value.trim(),dni:$('tr_d').value.replace(/\D/g,''),mail:$('tr_m').value.trim(),telefono:$('tr_t').value.trim(),nacimiento:$('tr_b').value},m=$('trmsg');
+    if(d.dniActual.length<7) return flash(m,'err','Poné tu DNI para confirmar.');
+    if(d.nombre.split(/\s+/).length<2) return flash(m,'err','Completá nombre y apellido de quien la recibe.');
+    if(d.dni.length<7) return flash(m,'err','Revisá el DNI de quien la recibe.');
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.mail)) return flash(m,'err','Revisá el mail de quien la recibe.');
+    if(d.telefono.replace(/\D/g,'').length<8) return flash(m,'err','Completá el celular de quien la recibe.');
+    if(!confirm('¿Transferir la entrada a '+d.nombre+'? Tu QR deja de servir.')) return;
+    var b=this;b.disabled=true;b.innerHTML='<span class="spin"></span>';
+    call('apiTransferir',t.codigo,d).then(function(r){
+      render('<div class="card center" style="margin-top:20px"><div style="font-size:46px">✅</div><h2>¡Transferida!</h2><p class="sm">La entrada ahora es de <b>'+h(r.nombre)+'</b>. Le mandamos el QR nuevo a <b>'+h(r.mail)+'</b>.</p><p class="mut xs">Si no le llega, que revise spam/promociones o lo busque en Mis entradas con su DNI y mail.</p><a class="btn" style="display:block;text-decoration:none" href="'+BASE+'" target="_top">Ir a eventos</a></div>');
+    }).catch(function(e){b.disabled=false;b.textContent='Transferir';flash(m,'err',errMsg(e))});
+  };
+}
+
+function verTicket(code){
+  loading();
+  call('apiTicket',code).then(function(t){
+    if(!t){render('<div class="msg err" style="margin-top:20px">Esta entrada no existe.</div>');return}
+    if(t.transferida){render('<div class="card center" style="margin-top:20px"><div style="font-size:46px">↪️</div><h2>Entrada transferida</h2><p class="sm">Esta entrada se transfirió a otra persona y este QR ya no sirve. A quien la recibió le llegó el QR nuevo por mail.</p><a class="btn" style="display:block;text-decoration:none" href="'+BASE+'?modo=mis" target="_top">Mis entradas</a></div>');return}
+    if(t.sinDatos&&t.estado==='VALIDA') return formActivar(t);
+    S.tk=t;
+    var st={VALIDA:'Válida · mostrala en la puerta',USADA:'Ya ingresó '+(t.ingreso||''),ANULADA:'Entrada anulada'}[t.estado]||t.estado;
+    render('<div class="card center" style="margin-top:16px"><div class="mut xs">'+(t.gratis?'INVITACIÓN':'ENTRADA')+'</div><div style="font-weight:800;font-size:19px">'+h(t.evento)+'</div>'+
+     '<div class="mut sm">'+h(t.fecha)+(t.hora?' · '+h(t.hora)+' hs':'')+(t.lugar?' · '+h(t.lugar):'')+'</div>'+
+     '<div style="margin:16px 0"><div class="qrbox"'+(t.estado!=='VALIDA'?' style="opacity:.25"':'')+'><img src="'+qrSrc(ticketUrl(t.codigo),500)+'" alt="QR"></div></div>'+
+     (t.gratis?'<div style="font-weight:900;letter-spacing:2px;color:var(--yel);margin-bottom:6px">🎁 INVITACIÓN</div>':'')+
+     '<div class="code">'+h(t.codigo)+'</div><div style="font-weight:800;font-size:18px;margin-top:10px">'+h(t.nombre)+'</div><div class="mut sm">DNI '+h(t.dni)+' · '+h(t.tipo)+'</div>'+
+     '<div style="margin-top:12px"><span class="pill p-'+h(t.estado)+'">'+h(st)+'</span></div>'+(t.recibida?'<div class="mut xs" style="margin-top:8px">Recibida por transferencia</div>':'')+'</div>'+
+     '<p class="center xs mut">Tip: sacale captura a esta pantalla por si en la puerta no hay señal.</p>'+
+     (t.transferible?'<button class="btn sec" onclick="formTransferir()">↪️ Transferir '+(t.gratis?'invitación':'entrada')+' a otra persona</button>':'')+
+     (store('dh_admin')?'<button class="btn sec" onclick="puerta(\''+h(t.codigo)+'\')">Controlar en puerta</button>':'')+
+     '<p class="center sm"><a href="'+BASE+'?modo=mis" target="_top">Mis entradas</a></p>');
+  }).catch(function(e){render('<div class="msg err">'+h(errMsg(e))+'</div>')});
+}
+
+/* =========================================================
+ * LOGIN (puerta / admin)
+ * ========================================================= */
+function login(key,titulo,onOk){
+  $('brandTag').textContent=titulo.toUpperCase();
+  render('<h2>'+h(titulo)+'</h2><div class="card"><label>Usuario</label><input id="l_u" autocapitalize="characters" value="'+(key==='dh_puerta'?'PUERTA':(key==='dh_dueno'?'':'ADMIN'))+'">'+
+   '<label>PIN</label><input id="l_p" type="password" inputmode="numeric" autocomplete="current-password"><div id="lmsg"></div><button class="btn" id="bLog">Entrar</button>'+
+   '<div class="mut xs center" style="margin-top:10px">🔒 Por seguridad, después de 5 PIN incorrectos el usuario se bloquea 15 minutos.</div></div>');
+  $('bLog').onclick=function(){
+    var a={u:$('l_u').value.trim().toUpperCase(),p:$('l_p').value.trim()};this.disabled=true;
+    call('apiLogin',a).then(function(r){
+      if(!r.ok){$('bLog').disabled=false;return flash($('lmsg'),'err',r.msg||'Usuario o PIN incorrecto.')}
+      if(key==='dh_dueno'&&r.rol!=='DUENO'&&r.rol!=='ADMIN'){$('bLog').disabled=false;return flash($('lmsg'),'err','Este usuario no tiene acceso al panel de dueños.')}
+      if(key==='dh_admin'&&r.rol!=='ADMIN'){$('bLog').disabled=false;return flash($('lmsg'),'err','Este usuario no es administrador.')}
+      a={u:a.u,tk:r.tk,rol:r.rol};store(key,a);onOk(a);
+    }).catch(function(e){$('bLog').disabled=false;flash($('lmsg'),'err',errMsg(e))});
+  };
+}
+function salir(key){var a=store(key);store(key,null);if(a&&a.tk)call('apiLogout',a).then(function(){location.reload()},function(){location.reload()});else location.reload()}
+function authFail(e,key,again){if(errMsg(e)==='AUTH'){store(key,null);again();return true}return false}
+
+/* =========================================================
+ * PUERTA
+ * ========================================================= */
+function puerta(codigoInicial){
+  var a=store('dh_puerta')||store('dh_admin');
+  if(!a) return login('dh_puerta','Puerta',function(){puerta(codigoInicial)});
+  S.a=a;$('brandTag').textContent='PUERTA · '+a.u;
+  loading();
+  call('apiPuertaInicio',a).then(function(evs){
+    S.pevs=evs;var guard=store('dh_pev');
+    if(!S.pev) S.pev=(evs.filter(function(e){return e.id===guard})[0]||evs.filter(function(e){return e.estado==='ACTIVO'})[0]||evs[0]||{}).id;
+    pintarPuerta();
+    if(codigoInicial) consultar(codigoInicial);
+  }).catch(function(e){if(!authFail(e,'dh_puerta',function(){puerta(codigoInicial)}))render('<div class="msg err">'+h(errMsg(e))+'</div>')});
+}
+function evPuerta(){return S.pevs.filter(function(e){return e.id===S.pev})[0]||{}}
+function pintarPuerta(){
+  var ev=evPuerta();
+  render('<div class="card"><label>Evento</label><select id="pev" onchange="S.pev=this.value;store(\'dh_pev\',S.pev);pintarPuerta()">'+
+    S.pevs.map(function(e){return '<option value="'+h(e.id)+'"'+(e.id===S.pev?' selected':'')+'>'+h(e.nombre)+' · '+h(e.fecha)+'</option>'}).join('')+'</select>'+
+    '<div class="row between"><div><div class="mut xs">ADENTRO</div><div class="counter"><span id="cAd">'+(ev.adentro||0)+'</span><span class="mut" style="font-size:24px"> / <span id="cTot">'+(ev.total||0)+'</span></span></div></div>'+
+    '<button class="btn sm sec" onclick="puerta()">↻</button></div></div>'+
+    '<div id="pres"></div>'+
+    '<label class="btn" id="bScan" style="display:block;text-align:center">📷 Escanear QR<input id="qrFoto" type="file" accept="image/*" capture="environment" style="display:none" onchange="leerFoto(this)"></label>'+
+    '<div class="mut xs center" style="margin-top:6px">Se abre la cámara: sacale una foto al QR y se lee solo.</div>'+
+    '<div id="reader" style="display:none"></div>'+
+    '<div class="card"><label>Buscar por DNI, nombre o código</label><div class="row"><input id="pq" placeholder="Ej: 35123456" style="margin:0" onkeydown="if(event.key===\'Enter\')buscarPuerta()"><button class="btn sm" onclick="buscarPuerta()">Buscar</button></div><div id="pbus"></div></div>'+
+    '<p class="center xs mut">Si la cámara no abre: escaneá el QR con la cámara del celular y abrí el link, o buscá por DNI.<br><a href="#" onclick="salir(\'dh_puerta\');return false">Cerrar sesión</a></p>');
+}
+function cargarLib(){
+  return new Promise(function(res,rej){if(window.Html5Qrcode)return res();var s=document.createElement('script');s.src='https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)});
+}
+function leerFoto(inp){
+  var f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+  $('pres').innerHTML='<div class="loading" style="padding:20px"><span class="spin"></span> Leyendo QR…</div>';
+  cargarLib().then(function(){
+    S.qrf=S.qrf||new Html5Qrcode('reader');
+    return S.qrf.scanFile(f,false);
+  }).then(function(txt){consultar(txt)}).catch(function(){
+    flash($('pres'),'err','No se pudo leer el QR. Sacá la foto más cerca y derecha, o buscá por DNI.');
+  });
+}
+function escanear(){$('qrFoto').click()}
+function consultar(code){
+  if(!$('pres')) return;
+  $('pres').innerHTML='<div class="loading" style="padding:20px"><span class="spin"></span></div>';
+  call('apiConsultar',S.a,code).then(pintarRes).catch(function(e){flash($('pres'),'err',errMsg(e))});
+}
+function pintarRes(r){
+  var box=$('pres'),html;
+  if(!r.encontrada&&r.transferida){html='<div class="res bad"><div class="big">✖ QR VIEJO</div><div class="who">Entrada transferida</div><div class="sm">Este QR ya no sirve: la entrada ahora es de <b>'+h(r.nombre)+'</b>, que tiene un QR nuevo.</div></div>'}
+  else if(!r.encontrada){html='<div class="res bad"><div class="big">✖ NO EXISTE</div><div class="sm">Código '+h(r.codigo)+'</div></div>'}
+  else{
+    var otroEv=r.eventoId!==S.pev;
+    var datos=(r.gratis?'<div style="font-weight:900;letter-spacing:2px">🎁 INVITACIÓN</div>':'')+(r.recibida?'<div class="xs">↪️ recibida por transferencia</div>':'')+'<div class="who">'+h(r.nombre||'(sin datos)')+'</div><div>DNI <b>'+h(r.dni||'—')+'</b> · '+h(r.tipo)+'</div><div class="sm mut">'+h(r.evento)+(r.rrpp?' · RRPP '+h(r.rrpp):'')+'</div>';
+    if(r.estado==='VALIDA'&&!otroEv&&r.sinDatos) html='<div class="res ok"><div class="big">✔ VÁLIDA</div>'+datos+
+      '<div class="sm" style="margin-top:8px">Entrada de RRPP sin datos: cargá los de la persona.</div>'+
+      '<input id="pn" placeholder="Nombre y apellido" style="margin-top:8px"><input id="pd" placeholder="DNI" inputmode="numeric" maxlength="9" style="margin-top:6px"><input id="pt" placeholder="Celular (opcional)" inputmode="tel" style="margin-top:6px">'+
+      '<button class="btn" style="margin-top:12px;background:#fff;color:#0e4d27;font-size:18px" onclick="ingresar(\''+h(r.codigo)+'\',this,1)">REGISTRAR Y DAR INGRESO</button></div>';
+    else if(r.estado==='VALIDA'&&!otroEv) html='<div class="res ok"><div class="big">✔ VÁLIDA</div>'+datos+'<button class="btn" style="margin-top:14px;background:#fff;color:#0e4d27;font-size:18px" onclick="ingresar(\''+h(r.codigo)+'\',this)">DAR INGRESO</button></div>';
+    else if(r.estado==='USADA') html='<div class="res '+(r.recienIngresada?'ok':'bad')+'"><div class="big">'+(r.recienIngresada?'✔ ADENTRO':'✖ YA INGRESÓ')+'</div>'+datos+(r.recienIngresada?'':'<div style="margin-top:8px">Entró: <b>'+h(r.ingreso)+'</b> · controló '+h(r.controlo)+'</div>')+'</div>';
+    else if(r.estado==='ANULADA') html='<div class="res bad"><div class="big">✖ ANULADA</div>'+datos+'</div>';
+    else html='<div class="res warn"><div class="big">⚠ OTRO EVENTO</div>'+datos+'</div>';
+  }
+  box.innerHTML=html;box.scrollIntoView({behavior:'smooth',block:'start'});
+  try{navigator.vibrate&&navigator.vibrate(r.encontrada&&r.estado==='VALIDA'?80:[200,100,200])}catch(e){}
+}
+function ingresar(code,btn,conDatos){
+  var datos=null;
+  if(conDatos){datos={nombre:$('pn').value.trim(),dni:$('pd').value.replace(/\D/g,''),telefono:$('pt').value.trim()};
+    if(datos.nombre.split(/\s+/).length<2||datos.dni.length<7){alert('Cargá nombre, apellido y DNI.');return}}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>';
+  call('apiIngresar',S.a,code,datos).then(function(r){
+    pintarRes(r);
+    if(r.recienIngresada){var c=$('cAd');c.textContent=(+c.textContent||0)+1;
+      $('pres').insertAdjacentHTML('beforeend','<button class="btn" onclick="escanear()">📷 Escanear siguiente</button>')}
+  }).catch(function(e){btn.disabled=false;btn.textContent=conDatos?'REGISTRAR Y DAR INGRESO':'DAR INGRESO';flash($('pres'),'err',errMsg(e))});
+}
+function buscarPuerta(){
+  var q=$('pq').value.trim();if(q.length<3)return;
+  $('pbus').innerHTML='<div class="loading" style="padding:10px"><span class="spin"></span></div>';
+  call('apiBuscar',S.a,q,S.pev).then(function(list){
+    if(!list.length){$('pbus').innerHTML='<div class="msg info">Sin resultados en este evento.</div>';return}
+    $('pbus').innerHTML=list.map(function(r){return '<div class="list-item row between"><div><b>'+h(r.nombre)+'</b><div class="mut xs">DNI '+h(r.dni||'—')+' · '+h(r.tipo)+' · '+h(r.codigo)+'</div><span class="pill p-'+h(r.estado)+'">'+h(r.estado)+'</span></div>'+
+      '<button class="btn sm" onclick="consultar(\''+h(r.codigo)+'\')">Ver</button></div>'}).join('');
+  }).catch(function(e){flash($('pbus'),'err',errMsg(e))});
+}
+
+/* =========================================================
+ * PANEL ADMIN
+ * ========================================================= */
+var TABS=[['pend','Pendientes'],['res','Resumen'],['ev','Eventos'],['emit','Emitir'],['bus','Buscar'],['rrpp','RRPP'],['cli','Clientes'],['links','Links']];
+function admin(){
+  var a=store('dh_admin');
+  if(!a) return login('dh_admin','Panel',admin);
+  S.a=a;$('brandTag').textContent='PANEL · '+a.u;$('app').classList.add('wide');
+  loading();
+  call('apiAdmin',a).then(function(d){
+    S.ad=d;S.tab=S.tab||'pend';
+    if(!S.aev){var act=d.eventos.filter(function(e){return e.estado==='ACTIVO'});S.aev=(act[0]||d.eventos[0]||{}).id}
+    pintarTabs();pintarTab();
+  }).catch(function(e){if(!authFail(e,'dh_admin',admin))render('<div class="msg err">'+h(errMsg(e))+'</div>')});
+}
+function pintarTabs(){
+  var t=$('tabs');t.classList.remove('hide');
+  t.innerHTML=TABS.map(function(x){return '<button class="'+(S.tab===x[0]?'on':'')+'" onclick="S.tab=\''+x[0]+'\';pintarTabs();pintarTab()">'+x[1]+(x[0]==='pend'&&S.ad.pendientes.length?'<span class="badge">'+S.ad.pendientes.length+'</span>':'')+'</button>'}).join('')+
+    '<button onclick="admin()">↻</button><button onclick="salir(\'dh_admin\')">Salir</button>';
+}
+function pintarTab(){({pend:tabPend,res:tabRes,ev:tabEv,emit:tabEmit,bus:tabBus,rrpp:tabRrpp,cli:tabCli,links:tabLinks})[S.tab]()}
+function evSel(onch){
+  return '<select onchange="S.aev=this.value;'+(onch||'pintarTab()')+'">'+S.ad.eventos.map(function(e){return '<option value="'+h(e.id)+'"'+(e.id===S.aev?' selected':'')+'>'+h(e.nombre)+' · '+h(e.fecha)+' ('+h(e.estado)+')</option>'}).join('')+'</select>';
+}
+function evAdmin(){return S.ad.eventos.filter(function(e){return e.id===S.aev})[0]}
+
+function tabPend(){
+  var d=S.ad,html='<h2>Compras a revisar</h2>';
+  if(d.cuotaMail!=null) html+='<div class="mut xs">Mails que quedan hoy: <b>'+d.cuotaMail+'</b></div>';
+  if(!d.pendientes.length) html+='<div class="card mut">No hay compras pendientes 🙌</div>';
+  d.pendientes.forEach(function(o){
+    html+='<div class="card" id="o_'+h(o.orden)+'"><div class="row between wrapf"><b>'+h(o.nombre)+'</b><span class="price">'+money(o.total)+'</span></div>'+
+     '<div class="sm">DNI '+h(o.dni)+' · '+h(o.telefono)+' · '+h(o.mail)+'</div>'+
+     '<div class="sm mut">'+h(o.orden)+' · '+h(o.fecha)+' · '+o.cantidad+' × '+h(o.tipo)+' ('+o.entradas+' entradas) · '+h(o.evento)+(o.rrpp?' · RRPP <b>'+h(o.rrpp)+'</b>':'')+'</div>'+
+     '<div class="row wrapf" style="margin-top:10px">'+(o.comprobante?'<a class="btn sm sec" style="text-decoration:none" target="_blank" href="'+h(o.comprobante)+'">🧾 Ver comprobante</a>':'')+
+     '<button class="btn sm ok" onclick="aprobar(\''+h(o.orden)+'\',this)">✔ Aprobar</button><button class="btn sm bad" onclick="mostrarRech(\''+h(o.orden)+'\')">✖ Rechazar</button></div>'+
+     '<div id="rj_'+h(o.orden)+'" class="hide" style="margin-top:8px"><input id="rm_'+h(o.orden)+'" placeholder="Motivo (le llega por mail)" value="No encontramos la transferencia."><button class="btn sm bad" onclick="rechazar(\''+h(o.orden)+'\',this)">Confirmar rechazo</button></div>'+
+     '<div id="om_'+h(o.orden)+'"></div></div>';
+  });
+  if(d.ultimas.length){
+    html+='<h3>Últimas revisadas</h3><div class="card" style="overflow-x:auto"><table><tr><th>Orden</th><th>Nombre</th><th>Tipo</th><th class="n">Total</th><th>Estado</th><th></th></tr>'+
+     d.ultimas.map(function(o){return '<tr><td class="xs">'+h(o.orden)+'<div class="mut">'+h(o.fecha)+'</div></td><td>'+h(o.nombre)+'<div class="mut xs">'+h(o.origen==='MANUAL'?'Manual':(o.origen==='MP'?'Mercado Pago'+(o.reviso==='MP'?' · automática':''):'Web'))+(o.rrpp?' · '+h(o.rrpp):'')+'</div></td><td class="sm">'+o.cantidad+' × '+h(o.tipo)+'</td><td class="n">'+money(o.total)+'</td><td><span class="pill p-'+h(o.estado)+'">'+h(o.estado)+'</span></td>'+
+      '<td>'+(o.estado==='APROBADA'&&o.mail?'<button class="btn sm sec" onclick="reenviar(\''+h(o.orden)+'\',this)">Reenviar</button>':'')+'</td></tr>'}).join('')+'</table></div>';
+  }
+  render(html);
+}
+function aprobar(o,btn){
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>';
+  call('apiAprobar',S.a,o).then(function(r){
+    var c=$('o_'+o);c.style.opacity=.5;flash($('om_'+o),'ok','Aprobada'+(r.mail&&r.mail.enviado?' · entradas enviadas por mail':''));
+    S.ad.pendientes=S.ad.pendientes.filter(function(x){return x.orden!==o});pintarTabs();
+  }).catch(function(e){btn.disabled=false;btn.textContent='✔ Aprobar';flash($('om_'+o),'err',errMsg(e))});
+}
+function mostrarRech(o){$('rj_'+o).classList.toggle('hide')}
+function rechazar(o,btn){
+  btn.disabled=true;
+  call('apiRechazar',S.a,o,$('rm_'+o).value).then(function(){
+    $('o_'+o).style.opacity=.5;flash($('om_'+o),'err','Rechazada');S.ad.pendientes=S.ad.pendientes.filter(function(x){return x.orden!==o});pintarTabs();
+  }).catch(function(e){btn.disabled=false;flash($('om_'+o),'err',errMsg(e))});
+}
+function reenviar(o,btn){btn.disabled=true;call('apiReenviar',S.a,o).then(function(){btn.textContent='Enviado ✔'}).catch(function(e){btn.disabled=false;alert(errMsg(e))})}
+
+function tablaRrpp(lista){
+  if(!lista.length) return '<div class="card mut">Sin ventas todavía.</div>';
+  return '<div class="card" style="overflow-x:auto"><table><tr><th>RRPP</th><th class="n">Pagas</th><th class="n">Invitaciones</th><th class="n">Entraron</th><th class="n">$</th></tr>'+
+   lista.map(function(x){var tot=x.vendidas+x.regaladas;return '<tr><td><b>'+h(x.rrpp)+'</b></td><td class="n">'+x.vendidas+'</td><td class="n">'+x.regaladas+'</td><td class="n">'+x.entraron+(tot?' <span class="mut xs">('+Math.round(x.entraron/tot*100)+'%)</span>':'')+(x.sinDatos?'<div class="mut xs">'+x.sinDatos+' sin activar</div>':'')+'</td><td class="n">'+money(x.plata)+'</td></tr>'+
+    (x.adentro&&x.adentro.length?'<tr><td colspan="5" style="padding-top:0"><details><summary class="sm" style="cursor:pointer;color:var(--yel)">Ver quiénes entraron ('+x.adentro.length+')</summary>'+
+     '<table style="margin-top:6px">'+x.adentro.map(function(p){return '<tr><td class="sm">'+h(p.nombre)+'<div class="mut xs">DNI '+h(p.dni)+' · '+h(p.tipo)+'</div></td><td class="sm">'+(p.regalada?'<span class="pill p-PENDIENTE">INVITACIÓN</span>':'<span class="pill p-APROBADA">PAGA</span>')+'</td><td class="xs n">'+h(p.hora)+'</td></tr>'}).join('')+'</table></details></td></tr>':'')}).join('')+
+   '</table><div class="mut xs" style="margin-top:6px">Pagas / Invitaciones = entradas asignadas al RRPP. Entraron = pasaron por la puerta con esa entrada.</div></div>';
+}
+
+function tabRes(){
+  var ev=evAdmin();if(!ev){render('<div class="card mut">Todavía no hay eventos.</div>');return}
+  var r=ev.resumen;
+  var html='<h2>Resumen</h2>'+evSel()+'<div class="kpis">'+
+    '<div class="kpi"><span class="mut xs">RECAUDADO (APROBADO)</span><b>'+money(r.recaudado)+'</b></div>'+
+    '<div class="kpi"><span class="mut xs">ENTRADAS EMITIDAS</span><b>'+r.entradas+'</b></div>'+
+    '<div class="kpi"><span class="mut xs">ADENTRO</span><b>'+r.adentro+'</b></div>'+
+    '<div class="kpi"><span class="mut xs">PENDIENTES</span><b>'+r.pendientes+'</b></div></div>'+
+    '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Reservadas*</th><th class="n">Cupo</th><th class="n">$</th></tr>'+
+    ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.venta==='BLOQ'?' <span class="mut xs">(no habilitada)</span>':(t.activo?'':' <span class="mut xs">(inactivo)</span>'))+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+t.vendidas+'</td><td class="n">'+t.ocupado+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+
+    '</table><div class="mut xs" style="margin-top:6px">*Reservadas = aprobadas + pendientes (es lo que descuenta del cupo).</div></div>'+
+    '<h3>RRPP</h3>'+tablaRrpp(r.rrpp);
+  render(html);
+}
+
+function tabEv(){
+  var html='<h2>Eventos</h2><button class="btn sm" onclick="formEv()">+ Nuevo evento</button>';
+  S.ad.eventos.forEach(function(e,i){
+    html+='<div class="card"><div class="row between wrapf"><div><b>'+h(e.nombre)+'</b><div class="mut sm">'+h(e.fecha)+' · '+h(e.hora)+' · '+h(e.lugar)+'</div></div><span class="pill p-'+(e.estado==='ACTIVO'?'APROBADA':'USADA')+'">'+h(e.estado)+'</span></div>'+
+      '<table style="margin-top:8px"><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Cupo</th><th class="n">Pers.</th><th></th></tr>'+
+      e.tipos.map(function(t,j){return '<tr><td>'+h(t.tipo)+(t.tanda?' <span class="mut xs">('+h(t.grupo)+' · tanda '+t.tanda+')</span>':'')+(t.venta==='BLOQ'?' <span class="mut xs">(se ve, no habilitada)</span>':(t.venta==='NO'?' <span class="mut xs">(oculto)</span>':''))+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+t.personas+'</td><td class="n"><button class="btn sm sec" onclick="formTipo('+i+','+j+')">Editar</button></td></tr>'}).join('')+
+      '</table><div class="row wrapf" style="margin-top:10px"><button class="btn sm sec" onclick="formEv('+i+')">Editar evento</button><button class="btn sm sec" onclick="formTipo('+i+')">+ Tipo de entrada</button></div></div>';
+  });
+  render(html);
+}
+function formEv(i){
+  var e=i!=null?S.ad.eventos[i]:{estado:'OCULTO'};
+  render('<h2>'+(i!=null?'Editar':'Nuevo')+' evento</h2><div class="card">'+
+   '<label>Nombre</label><input id="e_n" value="'+h(e.nombre||'')+'">'+
+   '<div class="grid2"><div><label>Fecha</label><input id="e_f" type="date" value="'+h(e.fechaISO||'')+'"></div><div><label>Hora</label><input id="e_h" placeholder="23:59" value="'+h(e.hora||'')+'"></div></div>'+
+   '<label>Lugar</label><input id="e_l" value="'+h(e.lugar||'')+'">'+
+   '<label>Descripción (sobre el evento)</label><textarea id="e_d" rows="8" placeholder="Contá de qué se trata, horarios, consumiciones, dress code…">'+h(e.descripcion||'')+'</textarea>'+
+   '<label>Flyer (foto principal)</label><div class="row"><input id="e_i" placeholder="Link de Drive o de la imagen" value="'+h(e.imagenRaw||'')+'" style="margin:4px 0"><label class="btn sm sec" style="white-space:nowrap;margin:0">📷 Subir<input type="file" accept="image/*" style="display:none" onchange="subirFoto(this,\'e_i\')"></label></div>'+
+   '<label style="display:block;margin-top:10px">Galería de fotos (un link por renglón)</label><textarea id="e_g" rows="4" placeholder="https://drive.google.com/file/d/...">'+h(e.galeriaRaw||'')+'</textarea>'+
+   '<label class="btn sm sec" style="display:inline-block;margin:0 0 10px">📷 Subir fotos a la galería<input type="file" accept="image/*" multiple style="display:none" onchange="subirFoto(this,\'e_g\')"></label><div id="fotomsg"></div>'+
+   '<label>Ubicación para Google Maps (dirección o link de Maps)</label><input id="e_mp" placeholder="Ej: Say Beach, Costanera Este, Santa Fe" value="'+h(e.maps||'')+'">'+
+   '<div class="grid2"><div><label>Estado</label><select id="e_s">'+['ACTIVO','OCULTO','FINALIZADO'].map(function(s){return '<option'+(e.estado===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
+   '<div><label>Edad mínima</label><input id="e_m" inputmode="numeric" value="'+h(e.edadMin||'')+'"></div></div>'+
+   '<div class="mut xs" style="margin-bottom:10px">ACTIVO = se vende · OCULTO = no se ve · FINALIZADO = no se vende pero la puerta lo sigue viendo.</div>'+
+   '<div id="emsg"></div><div class="row"><button class="btn sec" onclick="tabEv()">Cancelar</button><button class="btn" id="bEv">Guardar</button></div></div>');
+  $('bEv').onclick=function(){
+    var b=this;b.disabled=true;
+    call('apiGuardarEvento',S.a,{id:e.id,nombre:$('e_n').value,fecha:$('e_f').value,hora:$('e_h').value,lugar:$('e_l').value,descripcion:$('e_d').value,imagen:$('e_i').value,galeria:$('e_g').value,maps:$('e_mp').value,estado:$('e_s').value,edadMin:$('e_m').value})
+     .then(function(r){S.tab='ev';S.aev=r.id;admin()}).catch(function(x){b.disabled=false;flash($('emsg'),'err',errMsg(x))});
+  };
+}
+function subirFoto(inp,destino){
+  var files=[].slice.call(inp.files||[]);inp.value='';if(!files.length)return;
+  var m=$('fotomsg'),hechas=0;m.innerHTML='<div class="msg info"><span class="spin"></span> Subiendo '+files.length+' foto(s)…</div>';
+  files.reduce(function(p,f){return p.then(function(){return fileToB64(f)}).then(function(c){return call('apiSubirFoto',S.a,c)}).then(function(r){
+    hechas++;var el=$(destino);if(destino==='e_i')el.value=r.url;else el.value=(el.value.trim()?el.value.trim()+'\n':'')+r.url;})},Promise.resolve())
+  .then(function(){flash(m,'ok',hechas+' foto(s) subidas. Tocá Guardar para que se vean en la venta.')}).catch(function(e){flash(m,'err',errMsg(e))});
+}
+function formTipo(i,j){
+  var e=S.ad.eventos[i],t=j!=null?e.tipos[j]:{activo:true,venta:'SI',personas:1,orden:e.tipos.length+1};
+  render('<h2>'+(j!=null?'Editar':'Nuevo')+' tipo de entrada</h2><div class="mut sm">'+h(e.nombre)+'</div><div class="card">'+
+   '<label>Nombre (ej: General · 1ra tanda, VIP, Mesa x6)</label><input id="t_n" value="'+h(t.tipo||'')+'">'+
+   '<label>Descripción (opcional)</label><input id="t_d" value="'+h(t.descripcion||'')+'">'+
+   '<div class="grid2"><div><label>Precio</label><input id="t_p" inputmode="numeric" value="'+h(t.precio||'')+'"></div><div><label>Cupo (0 = sin límite)</label><input id="t_c" inputmode="numeric" value="'+h(t.cupo||0)+'"></div></div>'+
+   '<div class="grid2"><div><label>Personas por unidad</label><input id="t_x" inputmode="numeric" value="'+h(t.personas||1)+'"></div><div><label>Orden en la lista</label><input id="t_o" inputmode="numeric" value="'+h(t.orden||1)+'"></div></div>'+
+   '<label>Estado</label><select id="t_v">'+[['SI','A la venta'],['BLOQ','Se ve pero NO habilitada (sin vender)'],['NO','Oculta']].map(function(o){return '<option value="'+o[0]+'"'+((t.venta||(t.activo?'SI':'NO'))===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select>'+
+   '<div class="grid2"><div><label>Grupo de tandas (ej: General)</label><input id="t_g" value="'+h(t.grupo||'')+'"></div><div><label>N° de tanda (1, 2, 3…)</label><input id="t_tn" inputmode="numeric" value="'+h(t.tanda||'')+'"></div></div>'+
+   '<div class="mut xs" style="margin:8px 0">Personas por unidad: una Mesa x6 genera 6 QR.<br><b>Tandas:</b> creá cada tanda como un tipo con el mismo grupo (ej: General) y su número (1, 2, 3) con su cupo y precio. Se vende solo la primera con lugar; cuando se agota aparece <b>AGOTADA</b> y se habilita sola la siguiente. Las que siguen se ven como PRÓXIMAMENTE.</div>'+
+   '<div id="tmsg"></div><div class="row"><button class="btn sec" onclick="tabEv()">Cancelar</button><button class="btn" id="bTp">Guardar</button></div></div>');
+  $('bTp').onclick=function(){
+    var b=this;b.disabled=true;
+    call('apiGuardarTipo',S.a,{id:t.id,eventoId:e.id,tipo:$('t_n').value,descripcion:$('t_d').value,precio:$('t_p').value,cupo:$('t_c').value,personas:$('t_x').value,orden:$('t_o').value,venta:$('t_v').value,grupo:$('t_g').value,tanda:$('t_tn').value})
+     .then(function(){S.tab='ev';admin()}).catch(function(x){b.disabled=false;flash($('tmsg'),'err',errMsg(x))});
+  };
+}
+
+function tabEmit(){
+  var ev=evAdmin();if(!ev){render('<div class="card mut">Primero creá un evento.</div>');return}
+  render('<h2>Emitir entradas a mano</h2><div class="mut sm">Para cortesías, lista free, invitados o venta en efectivo. Quedan aprobadas al toque.</div><div class="card">'+
+   '<label>Evento</label>'+evSel('tabEmit()')+
+   '<label>Tipo</label><select id="x_t">'+ev.tipos.map(function(t){return '<option value="'+h(t.id)+'">'+h(t.tipo)+' · '+money(t.precio)+'</option>'}).join('')+'</select>'+
+   '<div class="grid2"><div><label>Cantidad</label><input id="x_c" inputmode="numeric" value="1"></div><div><label>Cobrado $ (0 si es cortesía)</label><input id="x_$" inputmode="numeric" value="0"></div></div>'+
+   '<label>Nombre</label><input id="x_n"><div class="grid2"><div><label>DNI</label><input id="x_d" inputmode="numeric"></div><div><label>Celular</label><input id="x_tel" inputmode="tel"></div></div>'+
+   '<div class="grid2"><div><label>Mail (opcional, le llegan por mail)</label><input id="x_m" type="email"></div><div><label>Nacimiento (opcional)</label><input id="x_nac" type="date"></div></div>'+
+   '<div class="grid2"><div><label>RRPP</label><input id="x_r" style="text-transform:uppercase"></div><div><label>Nota</label><input id="x_no" placeholder="Cortesía, lista, efectivo..."></div></div>'+
+   '<div id="xmsg"></div><button class="btn" id="bEm">Emitir</button></div><div id="xres"></div>');
+  $('bEm').onclick=function(){
+    var b=this;b.disabled=true;
+    call('apiEmitirManual',S.a,{tipoId:$('x_t').value,cantidad:$('x_c').value,total:$('x_$').value,nombre:$('x_n').value,dni:$('x_d').value,telefono:$('x_tel').value,mail:$('x_m').value,rrpp:$('x_r').value,nota:$('x_no').value,nacimiento:$('x_nac').value})
+    .then(function(r){
+      b.disabled=false;$('xmsg').innerHTML='';
+      var tel=($('x_tel').value||'').replace(/\D/g,'');
+      var txt='Tus entradas para '+(evAdmin().nombre)+':\n'+r.codigos.map(function(c,i){return (i+1)+') '+ticketUrl(c)}).join('\n');
+      $('xres').innerHTML='<div class="card"><div class="msg ok">Emitidas '+r.codigos.length+' entradas · orden '+h(r.orden)+(r.mail&&r.mail.enviado?' · enviadas por mail':'')+'</div>'+
+       r.codigos.map(function(c){return '<div class="list-item row between"><span class="code" style="font-size:14px">'+h(c)+'</span><a class="btn sm sec" style="text-decoration:none" target="_blank" href="'+ticketUrl(c)+'">Ver</a></div>'}).join('')+
+       '<div class="row" style="margin-top:10px"><a class="btn sm ok" style="text-decoration:none" target="_blank" href="https://wa.me/'+(tel?'54'+tel.replace(/^54/,''):'')+'?text='+encodeURIComponent(txt)+'">Mandar por WhatsApp</a><button class="btn sm sec" id="bCpE">Copiar links</button></div></div>';
+      $('bCpE').onclick=function(){copy(txt,this)};
+    }).catch(function(x){b.disabled=false;flash($('xmsg'),'err',errMsg(x))});
+  };
+}
+
+function tabBus(){
+  render('<h2>Buscar entradas</h2><div class="card"><div class="row"><input id="bq" placeholder="DNI, nombre, código u orden (DH-...)" style="margin:0" onkeydown="if(event.key===\'Enter\')buscarAdm()"><button class="btn sm" onclick="buscarAdm()">Buscar</button></div></div><div id="bres"></div>');
+}
+function buscarAdm(){
+  var q=$('bq').value.trim();if(q.length<3)return;$('bres').innerHTML='<div class="loading"><span class="spin"></span></div>';
+  call('apiBuscar',S.a,q,'').then(function(list){
+    if(!list.length){$('bres').innerHTML='<div class="msg info">Sin resultados.</div>';return}
+    $('bres').innerHTML='<div class="card" style="overflow-x:auto"><table><tr><th>Nombre</th><th>Evento / tipo</th><th>Estado</th><th></th></tr>'+list.map(function(r){
+      return '<tr><td><b>'+h(r.nombre)+'</b><div class="mut xs">DNI '+h(r.dni||'—')+' · '+h(r.codigo)+' · '+h(r.orden)+'</div></td><td class="sm">'+h(r.evento)+'<div class="mut xs">'+h(r.tipo)+(r.rrpp?' · '+h(r.rrpp):'')+'</div></td>'+
+      '<td><span class="pill p-'+h(r.estado)+'">'+h(r.estado)+'</span>'+(r.ingreso?'<div class="mut xs">'+h(r.ingreso)+'</div>':'')+'</td><td class="n" style="white-space:nowrap">'+
+      '<a class="btn sm sec" style="text-decoration:none" target="_blank" href="'+ticketUrl(r.codigo)+'">QR</a> '+
+      (r.estado==='USADA'?'<button class="btn sm sec" onclick="accEnt(\'apiDeshacerIngreso\',\''+h(r.codigo)+'\',this)">Deshacer ingreso</button> ':'')+
+      (r.estado!=='ANULADA'?'<button class="btn sm bad" onclick="if(confirm(\'¿Anular esta entrada?\'))accEnt(\'apiAnular\',\''+h(r.codigo)+'\',this)">Anular</button>':'')+'</td></tr>'}).join('')+'</table></div>';
+  }).catch(function(e){flash($('bres'),'err',errMsg(e))});
+}
+function accEnt(fn,code,btn){btn.disabled=true;call(fn,S.a,code).then(buscarAdm).catch(function(e){btn.disabled=false;alert(errMsg(e))})}
+
+function tabRrpp(){
+  var html='<h2>RRPP</h2><div class="mut sm">Cada RRPP recibe entradas que le asignan ustedes (pagas o sin costo). Le pasás los links; la persona completa sus datos con el link (o en la puerta) y cuando entra se le cuenta al RRPP.</div>'+
+   '<div class="card"><div class="grid2"><div><label>Código interno (ej: JUANI)</label><input id="r_c" style="text-transform:uppercase"></div><div><label>Nombre</label><input id="r_n"></div></div>'+
+   '<label>Celular</label><input id="r_t" inputmode="tel"><div id="rmsg"></div><button class="btn" id="bRr">Agregar / actualizar RRPP</button></div>';
+  html+=(S.ad.rrpp.length?S.ad.rrpp.map(function(r,i){
+    return '<div class="card"><div class="row between wrapf"><div><b>'+h(r.nombre||r.codigo)+'</b> <span class="mut xs">'+h(r.codigo)+(r.telefono?' · '+h(r.telefono):'')+'</span>'+(r.activo?'':' <span class="mut xs">(inactivo)</span>')+'</div>'+
+     '<div class="row"><button class="btn sm" onclick="asigForm('+i+')">Asignar entradas</button><button class="btn sm sec" onclick="rrDet('+i+')">Ver entradas</button><button class="btn sm sec" onclick="togRr('+i+')">'+(r.activo?'Desactivar':'Activar')+'</button></div></div>'+
+     '<div id="rr_'+i+'"></div></div>'}).join(''):'<div class="card mut">Sin RRPP cargados.</div>');
+  render(html);
+  $('bRr').onclick=function(){var b=this;b.disabled=true;call('apiGuardarRrpp',S.a,{codigo:$('r_c').value,nombre:$('r_n').value,telefono:$('r_t').value,activo:true}).then(function(){S.tab='rrpp';admin()}).catch(function(e){b.disabled=false;flash($('rmsg'),'err',errMsg(e))})};
+}
+function asigForm(i){
+  var ev=evAdmin();if(!ev){alert('Primero creá un evento.');return}
+  $('rr_'+i).innerHTML='<div style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px"><label>Evento</label>'+evSel('asigForm('+i+')')+
+   '<div class="grid2"><div><label>Tipo</label><select id="as_t'+i+'">'+ev.tipos.map(function(t){return '<option value="'+h(t.id)+'">'+h(t.tipo)+' · '+money(t.precio)+'</option>'}).join('')+'</select></div>'+
+   '<div><label>Cantidad</label><input id="as_c'+i+'" inputmode="numeric" value="10"></div></div>'+
+   '<label>¿Pagas o sin costo?</label><select id="as_g'+i+'"><option value="NO">Pagas (las cobra el RRPP)</option><option value="SI">Invitaciones (sin costo)</option></select>'+
+   '<div id="as_m'+i+'"></div><button class="btn" id="as_b'+i+'">Asignar</button></div>';
+  $('as_b'+i).onclick=function(){var b=this,r=S.ad.rrpp[i];b.disabled=true;b.innerHTML='<span class="spin"></span>';
+    call('apiAsignarRrpp',S.a,{rrpp:r.codigo,tipoId:$('as_t'+i).value,cantidad:$('as_c'+i).value,gratis:$('as_g'+i).value}).then(function(d){pintarRrDet(i,d,true)})
+    .catch(function(e){b.disabled=false;b.textContent='Asignar';flash($('as_m'+i),'err',errMsg(e))})};
+}
+function rrDet(i){$('rr_'+i).innerHTML='<div class="loading" style="padding:10px"><span class="spin"></span></div>';
+  call('apiRrppDetalle',S.a,S.ad.rrpp[i].codigo).then(function(d){pintarRrDet(i,d)}).catch(function(e){flash($('rr_'+i),'err',errMsg(e))})}
+function pintarRrDet(i,d,recien){
+  var r=S.ad.rrpp[i],evs={};d.entradas.forEach(function(e){(evs[e.eventoId]=evs[e.eventoId]||[]).push(e)});
+  var html='<div style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px">'+(recien?'<div class="msg ok">Entradas asignadas ✔</div>':'');
+  if(!d.entradas.length) html+='<div class="mut">Todavía no tiene entradas asignadas.</div>';
+  Object.keys(evs).forEach(function(k){
+    var L=evs[k],libres=L.filter(function(e){return e.estado==='SIN DATOS'});
+    var cnt=function(st){return L.filter(function(e){return e.estado===st}).length};
+    var txt='Entradas para '+L[0].evento+':\n'+libres.map(function(e,j){return (j+1)+') '+(e.gratis?'(invitación) ':'')+e.link}).join('\n');
+    S['rrtxt_'+i+'_'+k]=txt;
+    html+='<div style="margin-bottom:12px"><b>'+h(L[0].evento)+'</b><div class="mut xs">'+L.length+' asignadas · '+cnt('SIN DATOS')+' sin activar · '+cnt('CON DATOS')+' con datos · <b>'+cnt('ENTRÓ')+' entraron</b></div>'+
+     (libres.length?'<div class="row wrapf" style="margin:6px 0"><button class="btn sm" id="cp_'+i+'_'+k+'">Copiar links sin usar ('+libres.length+')</button>'+
+      (r.telefono?'<a class="btn sm ok" style="text-decoration:none" target="_blank" href="https://wa.me/54'+String(r.telefono).replace(/\D/g,'').replace(/^54/,'')+'?text='+encodeURIComponent(txt)+'">Mandar al RRPP por WhatsApp</a>':'')+'</div>':'')+
+     '<div style="overflow-x:auto;max-height:320px;overflow-y:auto"><table><tr><th>Entrada</th><th>Estado</th><th>Persona</th><th></th></tr>'+L.map(function(e){
+       return '<tr><td class="xs">'+h(e.tipo)+'<div class="mut">'+(e.gratis?'Invitación':'Paga')+' · '+h(e.codigo)+'</div></td><td><span class="pill p-'+(e.estado==='ENTRÓ'?'APROBADA':(e.estado==='ANULADA'?'RECHAZADA':(e.estado==='CON DATOS'?'USADA':'PENDIENTE')))+'">'+h(e.estado)+'</span></td>'+
+        '<td class="sm">'+h(e.nombre||'—')+(e.dni?'<div class="mut xs">DNI '+h(e.dni)+(e.ingreso?' · '+h(e.ingreso):'')+'</div>':'')+'</td><td>'+(e.link?'<button class="btn sm sec" onclick="copy(\''+h(e.link)+'\',this)">Link</button>':'<span class="mut xs">transferida</span>')+'</td></tr>'}).join('')+'</table></div></div>';
+  });
+  $('rr_'+i).innerHTML=html+'</div>';
+  Object.keys(evs).forEach(function(k){var b=$('cp_'+i+'_'+k);if(b)b.onclick=function(){copy(S['rrtxt_'+i+'_'+k],this)}});
+}
+function togRr(i){var r=S.ad.rrpp[i];r.activo=!r.activo;call('apiGuardarRrpp',S.a,r).then(function(){admin()})}
+
+/* =========================================================
+ * PANEL DUEÑOS (solo lectura)
+ * ========================================================= */
+function duenos(silent){
+  var a=store('dh_dueno');
+  if(!a) return login('dh_dueno','Dueños',function(){duenos()});
+  S.a=a;$('brandTag').textContent='DUEÑOS';$('app').classList.add('wide');
+  if(!silent) loading();
+  call('apiDueno',a).then(function(d){
+    S.du=d;S.duKeep=!!silent;
+    if(!S.dev||!d.eventos.some(function(e){return e.id===S.dev})){var act=d.eventos.filter(function(e){return e.estado==='ACTIVO'});S.dev=(act[0]||d.eventos[0]||{}).id}
+    pintarDueno();
+    clearTimeout(S.duT);S.duT=setTimeout(function(){duenos(true)},60000);
+  }).catch(function(e){if(!authFail(e,'dh_dueno',duenos)&&!silent)render('<div class="msg err">'+h(errMsg(e))+'</div>')});
+}
+function barras(items,lab,val,fmt){
+  var mx=Math.max.apply(null,items.map(function(x){return x[val]}).concat([1]));
+  return items.map(function(x){var w=Math.round(x[val]/mx*100);
+    return '<div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div class="sm" style="width:92px;flex:none">'+h(x[lab])+'</div>'+
+     '<div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px;height:16px"><div style="width:'+w+'%;background:var(--yel);height:16px;border-radius:6px"></div></div>'+
+     '<div class="sm n" style="width:84px;flex:none;text-align:right">'+(fmt?fmt(x[val]):x[val])+'</div></div>'}).join('');
+}
+function pintarDueno(){
+  var d=S.du,ev=d.eventos.filter(function(e){return e.id===S.dev})[0];
+  var top='<div class="row between wrapf"><h2 style="margin:0">Control del evento</h2><div class="row"><button class="btn sm" onclick="regalos()">🎁 Regalar invitaciones</button><button class="btn sm sec" onclick="duenos()">↻ Actualizar</button><button class="btn sm sec" onclick="salir(\'dh_dueno\')">Salir</button></div></div>'+
+    '<div class="mut xs" style="margin:4px 0 10px">'+h(d.usuario)+' · actualizado '+h(d.ahora)+' · se actualiza solo cada 1 minuto</div>';
+  if(!ev){render(top+'<div class="card mut">Todavía no hay eventos.</div>');return}
+  var r=ev.resumen,cap=r.capacidad,pct=cap?Math.round(r.entradas/cap*100):null;
+  var html=top+'<select onchange="S.dev=this.value;pintarDueno()">'+d.eventos.map(function(e){return '<option value="'+h(e.id)+'"'+(e.id===S.dev?' selected':'')+'>'+h(e.nombre)+' · '+h(e.fecha)+' ('+h(e.estado)+')</option>'}).join('')+'</select>'+
+    '<div class="mut sm" style="margin:6px 0 12px">'+h(ev.fecha)+' · '+h(ev.hora)+' · '+h(ev.lugar)+'</div>'+
+    '<div class="kpis">'+
+    '<div class="kpi"><span class="mut xs">RECAUDADO</span><b>'+money(r.recaudado)+'</b></div>'+
+    '<div class="kpi"><span class="mut xs">ENTRADAS VENDIDAS</span><b>'+r.entradas+(cap?' / '+cap:'')+'</b>'+(pct!=null?'<span class="mut xs">'+pct+'% de la capacidad</span>':'')+'</div>'+
+    '<div class="kpi"><span class="mut xs">ADENTRO AHORA</span><b>'+r.adentro+'</b><span class="mut xs">de '+r.emitidas+' entradas emitidas</span></div>'+
+    '<div class="kpi"><span class="mut xs">COMPRAS</span><b>'+r.compras+'</b><span class="mut xs">ticket promedio '+money(r.compras?r.recaudado/r.compras:0)+'</span></div></div>'+
+    '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Cupo</th><th class="n">Adentro</th><th class="n">$</th></tr>'+
+    ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.personas>1?' <span class="mut xs">(x'+t.personas+')</span>':'')+(t.activo?'':' <span class="mut xs">(cerrada)</span>')+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+t.vendidas+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+t.adentro+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+'</table></div>'+
+    '<h3>RRPP</h3>'+tablaRrpp(r.rrpp)+
+    '<h3>Ventas por día</h3><div class="card">'+(r.dias.length?barras(r.dias.map(function(x){return {dia:x.dia.slice(8,10)+'/'+x.dia.slice(5,7),entradas:x.entradas}}),'dia','entradas'):'<div class="mut">Sin ventas todavía</div>')+'</div>'+
+    '<h3>Ingresos a la fiesta por hora</h3><div class="card">'+(r.horas.length?barras(r.horas,'hora','cant'):'<div class="mut">Todavía no entró nadie.</div>')+'</div>'+
+    '<h3>Cómo se vendió</h3><div class="card" style="overflow-x:auto"><table><tr><th>Medio</th><th class="n">Entradas</th><th class="n">$</th></tr>'+
+    (r.origen.length?r.origen.map(function(x){return '<tr><td>'+h(x.origen)+'</td><td class="n">'+x.entradas+'</td><td class="n">'+money(x.plata)+'</td></tr>'}).join(''):'<tr><td colspan="3" class="mut">Sin ventas todavía</td></tr>')+'</table></div>'+
+    '<h3>Últimas ventas</h3><div class="card" style="overflow-x:auto"><table><tr><th>Fecha</th><th>Nombre</th><th>Tipo</th><th class="n">Total</th><th>RRPP</th></tr>'+
+    (ev.ultimas.length?ev.ultimas.map(function(o){return '<tr><td class="xs">'+h(o.fecha)+'</td><td>'+h(o.nombre)+'<div class="mut xs">'+h(o.origen)+'</div></td><td class="sm">'+o.cantidad+' × '+h(o.tipo)+'</td><td class="n">'+money(o.total)+'</td><td class="sm">'+h(o.rrpp||'—')+'</td></tr>'}).join(''):'<tr><td colspan="5" class="mut">Sin ventas todavía</td></tr>')+'</table></div>'+
+    (r.pendientes?'<div class="mut xs">Hay '+r.pendientes+' compra(s) iniciadas sin pagar todavía (no se cuentan).</div>':'');
+  var y=window.scrollY;render(html);if(S.duKeep){window.scrollTo(0,y);S.duKeep=false}
+}
+
+function regalos(){
+  clearTimeout(S.duT);loading();
+  call('apiMisRegalos',S.a).then(pintarRegalos).catch(function(e){if(!authFail(e,'dh_dueno',duenos))render('<div class="msg err">'+h(errMsg(e))+'</div>')});
+}
+function pintarRegalos(d,recien){
+  S.rg=d;var evs=d.eventos;
+  var html='<p><a href="#" onclick="duenos();return false">← Volver al control</a></p><h2>🎁 Regalar invitaciones</h2>'+
+   '<div class="mut sm">Generás invitaciones sin costo. Te quedan los links para mandar por WhatsApp: cada persona completa sus datos con su link (o en la puerta) y le llega el QR. En las estadísticas figuran a tu nombre.</div>';
+  if(!evs.length) html+='<div class="card mut" style="margin-top:12px">No hay eventos a la venta.</div>';
+  else html+='<div class="card" style="margin-top:12px"><label>Evento</label><select id="rg_e">'+evs.map(function(e,i){return '<option value="'+i+'">'+h(e.nombre)+' · '+h(e.fecha)+'</option>'}).join('')+'</select>'+
+   '<label>Tipo de entrada</label><select id="rg_t"></select><label>Cantidad (máx. 50)</label><input id="rg_c" inputmode="numeric" value="1">'+
+   '<div id="rgmsg"></div><button class="btn" id="bRg">Generar invitaciones</button></div>';
+  var L=d.regalos.filter(function(e){return e.estado!=='ANULADA'}),libres=L.filter(function(e){return e.estado==='SIN DATOS'&&e.link});
+  var txt='¡Te regalo una invitación para '+(L[0]?L[0].evento:'')+'! Abrí el link y completá tus datos:\n'+libres.map(function(e,j){return (libres.length>1?(j+1)+') ':'')+e.link}).join('\n');
+  html+='<h3>Mis invitaciones</h3><div class="card">'+(recien?'<div class="msg ok">Invitaciones generadas ✔ Mandá los links.</div>':'')+
+   (L.length?'<div class="mut xs" style="margin-bottom:8px">'+L.length+' regaladas · '+L.filter(function(e){return e.estado==='SIN DATOS'}).length+' sin activar · '+L.filter(function(e){return e.estado==='CON DATOS'}).length+' con datos · <b>'+L.filter(function(e){return e.estado==='ENTRÓ'}).length+' entraron</b></div>'+
+    (libres.length?'<div class="row wrapf" style="margin-bottom:10px"><a class="btn sm ok" style="text-decoration:none" target="_blank" href="https://wa.me/?text='+encodeURIComponent(txt)+'">Mandar links sin usar por WhatsApp ('+libres.length+')</a><button class="btn sm sec" id="bRgCp">Copiar links</button></div>':'')+
+    '<div style="overflow-x:auto;max-height:420px;overflow-y:auto"><table><tr><th>Invitación</th><th>Estado</th><th>Persona</th><th></th></tr>'+L.map(function(e){
+      return '<tr><td class="xs">'+h(e.tipo)+'<div class="mut">'+h(e.evento)+'</div></td><td><span class="pill p-'+(e.estado==='ENTRÓ'?'APROBADA':(e.estado==='CON DATOS'?'USADA':'PENDIENTE'))+'">'+h(e.estado)+'</span></td>'+
+       '<td class="sm">'+h(e.nombre||'—')+(e.dni?'<div class="mut xs">DNI '+h(e.dni)+'</div>':'')+'</td><td>'+(e.link&&e.estado==='SIN DATOS'?'<a class="btn sm sec" style="text-decoration:none" target="_blank" href="https://wa.me/?text='+encodeURIComponent('¡Te regalo una invitación para '+e.evento+'! Abrí el link y completá tus datos: '+e.link)+'">WhatsApp</a>':'')+'</td></tr>'}).join('')+'</table></div>'
+   :'<div class="mut">Todavía no regalaste invitaciones.</div>')+'</div>';
+  render(html);
+  var b=$('bRgCp');if(b)b.onclick=function(){copy(txt,this)};
+  if(!evs.length)return;
+  var pinta=function(){var ev=evs[+$('rg_e').value];$('rg_t').innerHTML=ev.tipos.map(function(t){return '<option value="'+h(t.id)+'">'+h(t.tipo)+(t.personas>1?' (x'+t.personas+')':'')+(t.quedan!=null?' · quedan '+t.quedan:'')+'</option>'}).join('')};
+  $('rg_e').onchange=pinta;pinta();
+  $('bRg').onclick=function(){
+    var c=parseInt($('rg_c').value,10),m=$('rgmsg');if(!(c>=1&&c<=50))return flash(m,'err','La cantidad tiene que ser entre 1 y 50.');
+    var t=$('rg_t').options[$('rg_t').selectedIndex].text;if(!confirm('¿Generar '+c+' invitación(es) de '+t+'?'))return;
+    var bt=this;bt.disabled=true;bt.innerHTML='<span class="spin"></span>';
+    call('apiRegalarDueno',S.a,{tipoId:$('rg_t').value,cantidad:c}).then(function(d){pintarRegalos(d,true)}).catch(function(e){bt.disabled=false;bt.textContent='Generar invitaciones';flash(m,'err',errMsg(e))});
+  };
+}
+
+function tabCli(){
+  render('<h2>Clientes · historial</h2><div class="card"><label>Buscar por DNI o nombre</label><div class="row"><input id="c_q" placeholder="Ej: 35123456 o Perez"><button class="btn sm" id="bCq" style="width:auto">Buscar</button></div><div id="cres"></div></div><div id="cext"><div class="loading"><span class="spin"></span></div></div>');
+  var buscar=function(){var q=$('c_q').value.trim();if(q.length<3)return flash($('cres'),'err','Escribí al menos 3 letras o números.');$('cres').innerHTML='<div class="loading"><span class="spin"></span></div>';
+    call('apiClientes',S.a,q).then(function(d){$('cres').innerHTML=d.resultados.length?d.resultados.map(fichaCli).join(''):'<div class="mut" style="margin-top:8px">No hay nadie con ese DNI o nombre.</div>'}).catch(function(e){flash($('cres'),'err',errMsg(e))})};
+  $('bCq').onclick=buscar;$('c_q').onkeydown=function(e){if(e.key==='Enter')buscar()};
+  call('apiClientes',S.a,'').then(function(d){
+    $('cext').innerHTML='<div class="kpis"><div class="kpi"><span class="mut xs">PERSONAS EN EL HISTORIAL</span><b>'+d.total+'</b></div><div class="kpi"><span class="mut xs">CON FECHA DE NACIMIENTO</span><b>'+d.conNac+'</b></div></div>'+
+     '<h3>🎂 Cumpleaños próximos (15 días)</h3><div class="card" style="overflow-x:auto">'+(d.cumple.length?'<table><tr><th>Nombre</th><th>Cumple</th><th class="n">Edad</th><th>Celular</th><th class="n">Eventos</th></tr>'+d.cumple.map(function(c){return '<tr><td>'+h(c.nombre)+'<div class="mut xs">DNI '+h(c.dni)+'</div></td><td>'+h(c.cumple)+(c.dias===0?' <b>¡HOY!</b>':' <span class="mut xs">(en '+c.dias+' días)</span>')+'</td><td class="n">'+(c.edad!==''?c.edad+1-(c.dias===0?1:0):'')+'</td><td class="sm">'+h(c.tel||'—')+'</td><td class="n">'+c.eventos+'</td></tr>'}).join('')+'</table>':'<div class="mut">Nadie cumple en los próximos 15 días (o todavía no cargaron la fecha).</div>')+'</div>'+
+     '<h3>⭐ Los que más vienen</h3><div class="card" style="overflow-x:auto"><table><tr><th>Nombre</th><th class="n">Eventos</th><th class="n">Fue</th><th class="n">Gastó</th><th>Último</th></tr>'+
+     (d.frecuentes.length?d.frecuentes.map(function(c){return '<tr><td>'+h(c.nombre)+'<div class="mut xs">DNI '+h(c.dni)+(c.rrpp?' · '+h(c.rrpp):'')+'</div></td><td class="n">'+c.eventos+'</td><td class="n">'+c.asistio+'</td><td class="n">'+money(c.gastado)+'</td><td class="sm">'+h(c.ultima)+'</td></tr>'}).join(''):'<tr><td colspan="5" class="mut">Todavía no hay datos.</td></tr>')+'</table></div>'+
+     '<div class="mut xs">Todo esto también queda en la hoja CLIENTES de la planilla (una fila por DNI, se actualiza sola).</div>';
+  }).catch(function(e){$('cext').innerHTML='<div class="msg err">'+h(errMsg(e))+'</div>'});
+}
+function fichaCli(c){
+  return '<div class="card" style="margin-top:10px"><div class="row between wrapf"><div><b>'+h(c.nombre)+'</b><div class="mut sm">DNI '+h(c.dni)+(c.nac?' · nació '+h(c.nac)+' ('+c.edad+' años)':'')+'</div><div class="mut sm">'+h(c.mail||'')+(c.tel?' · '+h(c.tel):'')+'</div></div>'+
+   '<div class="sm" style="text-align:right">'+c.eventos+' evento(s) · fue a '+c.asistio+'<div class="mut xs">'+c.entradas+' entradas · gastó '+money(c.gastado)+'</div></div></div>'+
+   '<table style="margin-top:8px"><tr><th>Evento</th><th>Tipo</th><th>RRPP</th><th>¿Fue?</th></tr>'+(c.detalle||[]).map(function(x){return '<tr><td class="sm">'+h(x.evento)+'<div class="mut xs">'+h(x.fecha)+'</div></td><td class="sm">'+h(x.tipo)+(x.regalada?' <span class="mut xs">(invitación)</span>':'')+'</td><td class="sm">'+h(x.rrpp||'—')+'</td><td class="sm">'+(x.asistio?'✔ '+h(x.ingreso):'✘')+'</td></tr>'}).join('')+'</table></div>';
+}
+
+function tabLinks(){
+  var L=[['Venta (todos los eventos)',BASE]].concat(S.ad.eventos.filter(function(e){return e.estado==='ACTIVO'}).map(function(e){return ['Venta '+e.nombre,BASE+'?e='+e.slug]})).concat([['Mis entradas',BASE+'?modo=mis'],['Puerta (escáner)',BASE+'?modo=puerta'],['Panel admin',BASE+'?modo=admin'],['Panel dueños (solo ver)',BASE+'?modo=duenos']]);
+  render('<h2>Links</h2><div class="card">'+L.map(function(l){return '<div class="list-item"><div class="row between wrapf"><b>'+l[0]+'</b><div class="row"><a class="btn sm sec" style="text-decoration:none" target="_blank" href="'+h(l[1])+'">Abrir</a><button class="btn sm" onclick="copy(\''+h(l[1])+'\',this)">Copiar</button></div></div><div class="mut xs" style="word-break:break-all">'+h(l[1])+'</div></div>'}).join('')+'</div>'+
+   '<div class="card sm mut">El cargo por servicio, el link público (URL_PUBLICA) y si se pueden transferir entradas (TRANSFERENCIAS) se cambian en la hoja CONFIG. Los PIN, en la hoja USUARIOS: al cambiar un PIN se cierran solas las sesiones abiertas de ese usuario.</div>');
+}
 </script>
 </body>
 </html>
