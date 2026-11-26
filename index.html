@@ -624,6 +624,19 @@ function tablaRrpp(lista){
    '</table><div class="mut xs" style="margin-top:6px">Pagas / Invitaciones = entradas asignadas al RRPP. Entraron = pasaron por la puerta con esa entrada.</div></div>';
 }
 
+function tablaDuenos(lista,evEstado){
+  if(!lista||!lista.length) return '<div class="card mut">No hay usuarios de dueños.</div>';
+  var fin=evEstado==='FINALIZADO';
+  var lbl={ENTRO:['ENTRÓ','APROBADA'],NO_ENTRO:[fin?'NO FUE':'TODAVÍA NO ENTRÓ','RECHAZADA'],SIN_ACTIVAR:['SIN ACTIVAR','PENDIENTE']};
+  return '<div class="card" style="overflow-x:auto"><table><tr><th>Dueño</th><th class="n">Regaló</th><th class="n">Activadas</th><th class="n">Entraron</th><th class="n">'+(fin?'No fueron':'Falta entrar')+'</th></tr>'+
+   lista.map(function(x){var pct=x.regaladas?Math.round(x.entraron/x.regaladas*100):0;
+    return '<tr><td><b>'+h(x.nombre)+'</b></td><td class="n">'+x.regaladas+'</td><td class="n">'+x.activadas+(x.sinActivar?'<div class="mut xs">'+x.sinActivar+' sin activar</div>':'')+'</td>'+
+     '<td class="n"><b>'+x.entraron+'</b>'+(x.regaladas?' <span class="mut xs">('+pct+'%)</span>':'')+'</td><td class="n">'+x.noEntraron+'</td></tr>'+
+     (x.personas.length?'<tr><td colspan="5" style="padding-top:0"><details><summary class="sm" style="cursor:pointer;color:var(--yel)">Ver sus invitados ('+x.personas.length+')</summary>'+
+      '<table style="margin-top:6px">'+x.personas.map(function(p){var l=lbl[p.estado];return '<tr><td class="sm">'+h(p.nombre)+(p.dni?'<div class="mut xs">DNI '+h(p.dni)+' · '+h(p.tipo)+'</div>':'<div class="mut xs">'+h(p.tipo)+'</div>')+'</td><td><span class="pill p-'+l[1]+'">'+l[0]+'</span></td><td class="xs n">'+(p.estado==='ENTRO'?h(p.hora):'')+'</td></tr>'}).join('')+'</table></details></td></tr>':'')}).join('')+
+   '</table><div class="mut xs" style="margin-top:6px">Regaló = invitaciones que generó. Activadas = la persona completó sus datos. Entraron = pasaron por la puerta.</div></div>';
+}
+
 function tabRes(){
   var ev=evAdmin();if(!ev){render('<div class="card mut">Todavía no hay eventos.</div>');return}
   var r=ev.resumen;
@@ -635,6 +648,7 @@ function tabRes(){
     '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Reservadas*</th><th class="n">Cupo</th><th class="n">$</th></tr>'+
     ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.venta==='BLOQ'?' <span class="mut xs">(no habilitada)</span>':(t.activo?'':' <span class="mut xs">(inactivo)</span>'))+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+t.vendidas+'</td><td class="n">'+t.ocupado+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+
     '</table><div class="mut xs" style="margin-top:6px">*Reservadas = aprobadas + pendientes (es lo que descuenta del cupo).</div></div>'+
+    '<h3>🎁 Invitaciones de los dueños</h3>'+tablaDuenos(r.duenos,ev.estado)+
     '<h3>RRPP</h3>'+tablaRrpp(r.rrpp);
   render(html);
 }
@@ -743,7 +757,7 @@ function tabRrpp(){
    '<label>Celular</label><input id="r_t" inputmode="tel"><div id="rmsg"></div><button class="btn" id="bRr">Agregar / actualizar RRPP</button></div>';
   html+=(S.ad.rrpp.length?S.ad.rrpp.map(function(r,i){
     return '<div class="card"><div class="row between wrapf"><div><b>'+h(r.nombre||r.codigo)+'</b> <span class="mut xs">'+h(r.codigo)+(r.telefono?' · '+h(r.telefono):'')+'</span>'+(r.activo?'':' <span class="mut xs">(inactivo)</span>')+'</div>'+
-     '<div class="row"><button class="btn sm" onclick="asigForm('+i+')">Asignar entradas</button><button class="btn sm sec" onclick="rrDet('+i+')">Ver entradas</button><button class="btn sm sec" onclick="togRr('+i+')">'+(r.activo?'Desactivar':'Activar')+'</button></div></div>'+
+     '<div class="row"><button class="btn sm" onclick="asigForm('+i+')">Asignar entradas</button><button class="btn sm sec" onclick="rrDet('+i+')">Ver entradas</button><button class="btn sm sec" onclick="togRr('+i+')">'+(r.activo?'Desactivar':'Activar')+'</button><button class="btn sm bad" onclick="borrarRr('+i+')">Eliminar</button></div></div>'+
      '<div id="rr_'+i+'"></div></div>'}).join(''):'<div class="card mut">Sin RRPP cargados.</div>');
   render(html);
   $('bRr').onclick=function(){var b=this;b.disabled=true;call('apiGuardarRrpp',S.a,{codigo:$('r_c').value,nombre:$('r_n').value,telefono:$('r_t').value,activo:true}).then(function(){S.tab='rrpp';admin()}).catch(function(e){b.disabled=false;flash($('rmsg'),'err',errMsg(e))})};
@@ -780,6 +794,9 @@ function pintarRrDet(i,d,recien){
   $('rr_'+i).innerHTML=html+'</div>';
   Object.keys(evs).forEach(function(k){var b=$('cp_'+i+'_'+k);if(b)b.onclick=function(){copy(S['rrtxt_'+i+'_'+k],this)}});
 }
+function borrarRr(i){var r=S.ad.rrpp[i];
+  if(!confirm('¿Eliminar a '+(r.nombre||r.codigo)+' de la lista de RRPP?\n\nLas entradas que ya tiene asignadas siguen valiendo y siguen contando en las estadísticas.'))return;
+  call('apiBorrarRrpp',S.a,r.codigo).then(function(){S.tab='rrpp';admin()}).catch(function(e){alert(errMsg(e))})}
 function togRr(i){var r=S.ad.rrpp[i];r.activo=!r.activo;call('apiGuardarRrpp',S.a,r).then(function(){admin()})}
 
 /* =========================================================
@@ -819,6 +836,7 @@ function pintarDueno(){
     '<div class="kpi"><span class="mut xs">COMPRAS</span><b>'+r.compras+'</b><span class="mut xs">ticket promedio '+money(r.compras?r.recaudado/r.compras:0)+'</span></div></div>'+
     '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Cupo</th><th class="n">Adentro</th><th class="n">$</th></tr>'+
     ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.personas>1?' <span class="mut xs">(x'+t.personas+')</span>':'')+(t.activo?'':' <span class="mut xs">(cerrada)</span>')+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+t.vendidas+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+t.adentro+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+'</table></div>'+
+    '<h3>🎁 Invitaciones de los dueños</h3>'+tablaDuenos(r.duenos,ev.estado)+
     '<h3>RRPP</h3>'+tablaRrpp(r.rrpp)+
     '<h3>Ventas por día</h3><div class="card">'+(r.dias.length?barras(r.dias.map(function(x){return {dia:x.dia.slice(8,10)+'/'+x.dia.slice(5,7),entradas:x.entradas}}),'dia','entradas'):'<div class="mut">Sin ventas todavía</div>')+'</div>'+
     '<h3>Ingresos a la fiesta por hora</h3><div class="card">'+(r.horas.length?barras(r.horas,'hora','cant'):'<div class="mut">Todavía no entró nadie.</div>')+'</div>'+
