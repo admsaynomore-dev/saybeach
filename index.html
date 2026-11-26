@@ -23,18 +23,47 @@
 <!--
   SAYBEACH — página pública de la ticketera.
   Muestra la app de Apps Script adentro de esta página (así no aparece el cartel de Google).
-  Si el teléfono no deja cargarla adentro (navegador de Instagram/Facebook/TikTok o algunos iPhone),
-  abre la app directo, así nunca queda la pantalla negra.
+  Desde Instagram/Facebook/TikTok (que no muestran la app) manda a abrir en Safari o Chrome.
+  Si en el navegador normal no carga en 12 s, abre la app directo.
 -->
 <div id="wait"><b>SAYBEACH</b><div class="sp"></div><div id="msg" style="font-size:14px;color:#bbb">Cargando…</div></div>
+<div id="ext" style="display:none;position:fixed;inset:0;z-index:6;background:#0b0b0b;color:#fff;padding:28px 22px;text-align:center;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+  <b style="color:#f5c400;font-size:28px;letter-spacing:2px">SAYBEACH</b>
+  <div style="font-size:19px;font-weight:700">Abrí las entradas en tu navegador</div>
+  <div style="font-size:15px;color:#ccc;max-width:340px;line-height:1.45">Instagram no deja comprar desde adentro de la app. Tocá el botón para abrir la página en <span id="nav">Safari</span>.</div>
+  <a id="bAbrir" href="#" style="display:block;background:#f5c400;color:#111;font-weight:800;font-size:17px;padding:15px 26px;border-radius:12px;text-decoration:none">Abrir en <span id="nav2">Safari</span></a>
+  <div id="pasos" style="font-size:14px;color:#aaa;max-width:340px;line-height:1.5">Si no se abre: tocá <b style="color:#fff">···</b> arriba a la derecha y elegí <b style="color:#fff">“Abrir en el navegador”</b> (o “Abrir en Safari”).</div>
+  <a id="bCopiar" href="#" style="color:#f5c400;font-size:14px">Copiar link</a>
+</div>
 <script>
   var EXEC = 'https://script.google.com/macros/s/AKfycbxxxrsGPeeKG4i5aVaDEv48eWVq3VnY0WgTY8EaHL4mkCTi9C5w_msYb0tu0i8s4dY6dA/exec';
   var DEST = EXEC + (location.search || '');
   var ua = navigator.userAgent || '';
-  var inApp = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Messenger|Line\/|TikTok|musical_ly|Bytedance|Snapchat|Twitter|WhatsApp/i.test(ua);
+  var inApp = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Messenger|Line\/|TikTok|musical_ly|Bytedance|Snapchat|Twitter/i.test(ua);
+  var ios = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var android = /Android/i.test(ua);
   function directo() { location.replace(DEST); }
   if (inApp) {
-    directo();
+    // Los navegadores internos (Instagram, Facebook, TikTok...) no muestran la app: la abrimos en Safari / Chrome
+    document.getElementById('wait').style.display = 'none';
+    var ext = document.getElementById('ext'); ext.style.display = 'flex';
+    var aqui = location.href;
+    var salto;
+    if (android) {
+      document.getElementById('nav').textContent = 'Chrome'; document.getElementById('nav2').textContent = 'Chrome';
+      salto = 'intent://' + aqui.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(DEST) + ';end';
+    } else if (ios) {
+      salto = 'x-safari-' + aqui;
+    } else {
+      salto = DEST;
+    }
+    document.getElementById('bAbrir').href = salto;
+    document.getElementById('bCopiar').onclick = function (e) {
+      e.preventDefault();
+      try { navigator.clipboard.writeText(aqui); this.textContent = '¡Link copiado! Pegalo en Safari o Chrome'; }
+      catch (err) { prompt('Copiá este link y abrilo en tu navegador:', aqui); }
+    };
+    setTimeout(function () { location.href = salto; }, 400);
   } else {
     var ok = false;
     window.addEventListener('message', function (e) {
