@@ -779,6 +779,14 @@ function asigForm(i){
 }
 function rrDet(i){$('rr_'+i).innerHTML='<div class="loading" style="padding:10px"><span class="spin"></span></div>';
   call('apiRrppDetalle',S.a,S.ad.rrpp[i].codigo).then(function(d){pintarRrDet(i,d)}).catch(function(e){flash($('rr_'+i),'err',errMsg(e))})}
+function txtLinksTipo(titulo,libres){
+  var grupos=[],idx={};
+  libres.forEach(function(e){var k=e.tipo+'|'+(e.gratis?1:0);if(idx[k]===undefined){idx[k]=grupos.length;grupos.push({tipo:e.tipo,gratis:e.gratis,L:[]})}grupos[idx[k]].L.push(e)});
+  return titulo+grupos.map(function(g){
+    var vip=/vip/i.test(g.tipo),mesa=/mesa/i.test(g.tipo),ic=vip?'⭐':(mesa?'🍾':'🎟️'),nom=String(g.tipo).toUpperCase(),cl=g.gratis?'invitación':'paga';
+    return '\n\n'+ic+' *'+nom+' · '+cl.toUpperCase()+'* ('+g.L.length+')\n'+g.L.map(function(e,j){return (j+1)+') '+ic+' '+nom+' ('+cl+'): '+e.link}).join('\n');
+  }).join('');
+}
 function pintarRrDet(i,d,recien){
   var r=S.ad.rrpp[i],evs={};d.entradas.forEach(function(e){(evs[e.eventoId]=evs[e.eventoId]||[]).push(e)});
   var html='<div style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px">'+(recien?'<div class="msg ok">Entradas asignadas ✔</div>':'');
@@ -786,7 +794,7 @@ function pintarRrDet(i,d,recien){
   Object.keys(evs).forEach(function(k){
     var L=evs[k],libres=L.filter(function(e){return e.estado==='SIN DATOS'});
     var cnt=function(st){return L.filter(function(e){return e.estado===st}).length};
-    var txt='Entradas para '+L[0].evento+':\n'+libres.map(function(e,j){return (j+1)+') '+(e.gratis?'(invitación) ':'')+e.link}).join('\n');
+    var txt=txtLinksTipo('Entradas para '+L[0].evento+':',libres);
     S['rrtxt_'+i+'_'+k]=txt;
     html+='<div style="margin-bottom:12px"><b>'+h(L[0].evento)+'</b><div class="mut xs">'+L.length+' asignadas · '+cnt('SIN DATOS')+' sin activar · '+cnt('CON DATOS')+' con datos · <b>'+cnt('ENTRÓ')+' entraron</b></div>'+
      (libres.length?'<div class="row wrapf" style="margin:6px 0"><button class="btn sm" id="cp_'+i+'_'+k+'">Copiar links sin usar ('+libres.length+')</button>'+
@@ -866,7 +874,7 @@ function pintarRegalos(d,recien){
    '<label>Tipo de entrada</label><select id="rg_t"></select><label>Cantidad</label><input id="rg_c" inputmode="numeric" value="1">'+
    '<div id="rgmsg"></div><button class="btn" id="bRg">Generar invitaciones</button></div>';
   var L=d.regalos.filter(function(e){return e.estado!=='ANULADA'}),libres=L.filter(function(e){return e.estado==='SIN DATOS'&&e.link});
-  var txt='¡Te regalo una invitación para '+(L[0]?L[0].evento:'')+'! Abrí el link y completá tus datos:\n'+libres.map(function(e,j){return (libres.length>1?(j+1)+') ':'')+e.link}).join('\n');
+  var txt=txtLinksTipo('¡Te regalo una invitación para '+(L[0]?L[0].evento:'')+'! Abrí el link y completá tus datos:',libres);
   html+='<h3>Mis invitaciones</h3><div class="card">'+(recien?'<div class="msg ok">Invitaciones generadas ✔ Mandá los links.</div>':'')+
    (L.length?'<div class="mut xs" style="margin-bottom:8px">'+L.length+' regaladas · '+L.filter(function(e){return e.estado==='SIN DATOS'}).length+' sin activar · '+L.filter(function(e){return e.estado==='CON DATOS'}).length+' con datos · <b>'+L.filter(function(e){return e.estado==='ENTRÓ'}).length+' entraron</b></div>'+
     (libres.length?'<div class="row wrapf" style="margin-bottom:10px"><a class="btn sm ok" style="text-decoration:none" target="_blank" href="https://wa.me/?text='+encodeURIComponent(txt)+'">Mandar links sin usar por WhatsApp ('+libres.length+')</a><button class="btn sm sec" id="bRgCp">Copiar links</button></div>':'')+
