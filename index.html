@@ -120,6 +120,10 @@ var S = {};   // estado
 function $(id){return document.getElementById(id)}
 function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(n){return '$'+Math.round(n||0).toLocaleString('es-AR')}
+function moneyC(n){return '$'+(Number(n)||0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function kpisMP(r){var m=r.mp;if(!m)return '';var pct=String(m.mpPct).replace('.',',');
+  return '<div class="kpi"><span class="mut xs">COMISIÓN MERCADO PAGO</span><b style="color:var(--bad)">−'+moneyC(m.mpComision)+'</b><span class="mut xs">'+pct+'% de '+money(m.mpBruto)+' cobrado por MP</span></div>'+
+   '<div class="kpi"><span class="mut xs">NETO (LO QUE RECIBÍS)</span><b style="color:var(--ok)">'+moneyC(m.neto)+'</b><span class="mut xs">recaudado menos comisión MP</span></div>'}
 var API=window.SB_API||'';
 function call(fn){var args=[].slice.call(arguments,1);
   if(!API&&window.google&&google.script&&google.script.run) return new Promise(function(res,rej){google.script.run.withSuccessHandler(res).withFailureHandler(function(e){rej(e)})[fn].apply(null,args)});
@@ -641,7 +645,7 @@ function tabRes(){
   var ev=evAdmin();if(!ev){render('<div class="card mut">Todavía no hay eventos.</div>');return}
   var r=ev.resumen;
   var html='<h2>Resumen</h2>'+evSel()+'<div class="kpis">'+
-    '<div class="kpi"><span class="mut xs">RECAUDADO (APROBADO)</span><b>'+money(r.recaudado)+'</b></div>'+
+    '<div class="kpi"><span class="mut xs">RECAUDADO (APROBADO)</span><b>'+money(r.recaudado)+'</b></div>'+kpisMP(r)+
     '<div class="kpi"><span class="mut xs">ENTRADAS EMITIDAS</span><b>'+r.entradas+'</b></div>'+
     '<div class="kpi"><span class="mut xs">ADENTRO</span><b>'+r.adentro+'</b></div>'+
     '<div class="kpi"><span class="mut xs">PENDIENTES</span><b>'+r.pendientes+'</b></div></div>'+
@@ -830,7 +834,7 @@ function pintarDueno(){
   var html=top+'<select onchange="S.dev=this.value;pintarDueno()">'+d.eventos.map(function(e){return '<option value="'+h(e.id)+'"'+(e.id===S.dev?' selected':'')+'>'+h(e.nombre)+' · '+h(e.fecha)+' ('+h(e.estado)+')</option>'}).join('')+'</select>'+
     '<div class="mut sm" style="margin:6px 0 12px">'+h(ev.fecha)+' · '+h(ev.hora)+' · '+h(ev.lugar)+'</div>'+
     '<div class="kpis">'+
-    '<div class="kpi"><span class="mut xs">RECAUDADO</span><b>'+money(r.recaudado)+'</b></div>'+
+    '<div class="kpi"><span class="mut xs">RECAUDADO</span><b>'+money(r.recaudado)+'</b></div>'+kpisMP(r)+
     '<div class="kpi"><span class="mut xs">ENTRADAS VENDIDAS</span><b>'+r.entradas+(cap?' / '+cap:'')+'</b>'+(pct!=null?'<span class="mut xs">'+pct+'% de la capacidad</span>':'')+'</div>'+
     '<div class="kpi"><span class="mut xs">ADENTRO AHORA</span><b>'+r.adentro+'</b><span class="mut xs">de '+r.emitidas+' entradas emitidas</span></div>'+
     '<div class="kpi"><span class="mut xs">COMPRAS</span><b>'+r.compras+'</b><span class="mut xs">ticket promedio '+money(r.compras?r.recaudado/r.compras:0)+'</span></div></div>'+
