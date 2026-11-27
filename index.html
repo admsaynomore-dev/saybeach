@@ -121,6 +121,10 @@ function $(id){return document.getElementById(id)}
 function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(n){return '$'+Math.round(n||0).toLocaleString('es-AR')}
 function moneyC(n){return '$'+(Number(n)||0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function kpisSplit(r){var x=r.split;if(!x)return '';
+  return '<div class="kpi"><span class="mut xs">💰 VENDIDAS (PAGAS)</span><b style="color:var(--ok)">'+x.pagas+'</b><span class="mut xs">'+x.pagasMP+' por Mercado Pago'+(x.pagasOtras?' · '+x.pagasOtras+' por RRPP / a mano':'')+' · '+x.pagasAdentro+' entraron</span></div>'+
+   '<div class="kpi"><span class="mut xs">🎁 REGALADAS (INVITACIONES)</span><b style="color:var(--yel)">'+x.regaladas+'</b><span class="mut xs">sin costo · '+x.regAdentro+' entraron</span></div>'}
+function tpSplit(r,t,k){var p=r.split&&r.split.porTipo&&r.split.porTipo[t.id];return p?p[k]:0}
 function kpisMP(r){var m=r.mp;if(!m)return '';var pct=String(m.mpPct).replace('.',',');
   return '<div class="kpi"><span class="mut xs">COMISIÓN MERCADO PAGO</span><b style="color:var(--bad)">−'+moneyC(m.mpComision)+'</b><span class="mut xs">'+pct+'% de '+money(m.mpBruto)+' cobrado por MP</span></div>'+
    '<div class="kpi"><span class="mut xs">NETO (LO QUE RECIBÍS)</span><b style="color:var(--ok)">'+moneyC(m.neto)+'</b><span class="mut xs">recaudado menos comisión MP</span></div>'}
@@ -646,11 +650,11 @@ function tabRes(){
   var r=ev.resumen;
   var html='<h2>Resumen</h2>'+evSel()+'<div class="kpis">'+
     '<div class="kpi"><span class="mut xs">RECAUDADO (APROBADO)</span><b>'+money(r.recaudado)+'</b></div>'+kpisMP(r)+
-    '<div class="kpi"><span class="mut xs">ENTRADAS EMITIDAS</span><b>'+r.entradas+'</b></div>'+
+    kpisSplit(r)+'<div class="kpi"><span class="mut xs">TOTAL EMITIDAS</span><b>'+r.entradas+'</b><span class="mut xs">pagas + regaladas</span></div>'+
     '<div class="kpi"><span class="mut xs">ADENTRO</span><b>'+r.adentro+'</b></div>'+
     '<div class="kpi"><span class="mut xs">PENDIENTES</span><b>'+r.pendientes+'</b></div></div>'+
-    '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Reservadas*</th><th class="n">Cupo</th><th class="n">$</th></tr>'+
-    ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.venta==='BLOQ'?' <span class="mut xs">(no habilitada)</span>':(t.activo?'':' <span class="mut xs">(inactivo)</span>'))+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+t.vendidas+'</td><td class="n">'+t.ocupado+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+
+    '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Regaladas</th><th class="n">Reservadas*</th><th class="n">Cupo</th><th class="n">$</th></tr>'+
+    ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.venta==='BLOQ'?' <span class="mut xs">(no habilitada)</span>':(t.activo?'':' <span class="mut xs">(inactivo)</span>'))+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+tpSplit(r,t,'pagas')+'</td><td class="n">'+tpSplit(r,t,'regaladas')+'</td><td class="n">'+t.ocupado+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+
     '</table><div class="mut xs" style="margin-top:6px">*Reservadas = aprobadas + pendientes (es lo que descuenta del cupo).</div></div>'+
     '<h3>🎁 Invitaciones de los dueños</h3>'+tablaDuenos(r.duenos,ev.estado)+
     '<h3>RRPP</h3>'+tablaRrpp(r.rrpp);
@@ -843,11 +847,11 @@ function pintarDueno(){
     '<div class="mut sm" style="margin:6px 0 12px">'+h(ev.fecha)+' · '+h(ev.hora)+' · '+h(ev.lugar)+'</div>'+
     '<div class="kpis">'+
     '<div class="kpi"><span class="mut xs">RECAUDADO</span><b>'+money(r.recaudado)+'</b></div>'+kpisMP(r)+
-    '<div class="kpi"><span class="mut xs">ENTRADAS VENDIDAS</span><b>'+r.entradas+(cap?' / '+cap:'')+'</b>'+(pct!=null?'<span class="mut xs">'+pct+'% de la capacidad</span>':'')+'</div>'+
+    kpisSplit(r)+
     '<div class="kpi"><span class="mut xs">ADENTRO AHORA</span><b>'+r.adentro+'</b><span class="mut xs">de '+r.emitidas+' entradas emitidas</span></div>'+
-    '<div class="kpi"><span class="mut xs">COMPRAS</span><b>'+r.compras+'</b><span class="mut xs">ticket promedio '+money(r.compras?r.recaudado/r.compras:0)+'</span></div></div>'+
-    '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Cupo</th><th class="n">Adentro</th><th class="n">$</th></tr>'+
-    ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.personas>1?' <span class="mut xs">(x'+t.personas+')</span>':'')+(t.activo?'':' <span class="mut xs">(cerrada)</span>')+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+t.vendidas+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+t.adentro+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+'</table></div>'+
+    '<div class="kpi"><span class="mut xs">COMPRAS PAGAS</span><b>'+(r.split?r.split.compras:r.compras)+'</b><span class="mut xs">ticket promedio '+money((r.split?r.split.compras:r.compras)?r.recaudado/(r.split?r.split.compras:r.compras):0)+'</span></div></div>'+
+    '<h3>Por tipo de entrada</h3><div class="card" style="overflow-x:auto"><table><tr><th>Tipo</th><th class="n">Precio</th><th class="n">Vendidas</th><th class="n">Regaladas</th><th class="n">Cupo</th><th class="n">Adentro</th><th class="n">$</th></tr>'+
+    ev.tipos.map(function(t){return '<tr><td>'+h(t.tipo)+(t.personas>1?' <span class="mut xs">(x'+t.personas+')</span>':'')+(t.activo?'':' <span class="mut xs">(cerrada)</span>')+'</td><td class="n">'+money(t.precio)+'</td><td class="n">'+tpSplit(r,t,'pagas')+'</td><td class="n">'+tpSplit(r,t,'regaladas')+'</td><td class="n">'+(t.cupo||'∞')+'</td><td class="n">'+t.adentro+'</td><td class="n">'+money(t.plata)+'</td></tr>'}).join('')+'</table></div>'+
     '<h3>🎁 Invitaciones de los dueños</h3>'+tablaDuenos(r.duenos,ev.estado)+
     '<h3>RRPP</h3>'+tablaRrpp(r.rrpp)+
     '<h3>Ventas por día</h3><div class="card">'+(r.dias.length?barras(r.dias.map(function(x){return {dia:x.dia.slice(8,10)+'/'+x.dia.slice(5,7),entradas:x.entradas}}),'dia','entradas'):'<div class="mut">Sin ventas todavía</div>')+'</div>'+
